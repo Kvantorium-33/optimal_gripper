@@ -1,0 +1,8 @@
+
+build/
+
+devel/
+
+*.workspace
+
+ws_gripper\.workspace\.user

@@ -6,3 +6,5 @@ devel/
 *.workspace
 
 ws_gripper\.workspace\.user
+
+hardware/OldVersions/

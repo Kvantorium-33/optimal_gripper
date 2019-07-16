@@ -8,3 +8,5 @@ devel/
 ws_gripper\.workspace\.user
 
 hardware/OldVersions/
+
+hardware/lockfile\.lck

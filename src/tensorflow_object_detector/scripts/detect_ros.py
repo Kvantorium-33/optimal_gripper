@@ -23,6 +23,9 @@ from cv_bridge import CvBridge, CvBridgeError
 from vision_msgs.msg import Detection2D, Detection2DArray, ObjectHypothesisWithPose
 
 # Object detection module imports
+
+sys.path.insert(1, os.path.dirname(os.path.dirname(__file__)) + '/src')
+
 import object_detection
 from object_detection.utils import label_map_util
 from object_detection.utils import visualization_utils as vis_util

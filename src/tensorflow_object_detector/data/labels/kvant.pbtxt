@@ -1,0 +1,33 @@
+item {
+   id: 1
+   name: 'soft toy'
+}
+item {
+   id: 2
+   name: 'color bottle'
+}
+item {
+   id: 3
+   name: 'banana'
+}
+item {
+   id: 4
+   name: 'bill'
+}
+item {
+   id: 5
+   name: 'envelope'
+}
+item {
+   id: 6
+   name: 'plastic bag'
+}
+item {
+   id: 7
+   name: 'aluminum can'
+}
+item {
+   id: 8
+   name: 'glass bottle'
+}
+

@@ -1,0 +1,6 @@
+{
+    "board": "OpenCM904:OpenCM904:OpenCM904",
+    "configuration": "upload_method=UploadMethod",
+    "programmer": "AVRISP mkII",
+    "sketch": "Control_serial_noROS.ino"
+}

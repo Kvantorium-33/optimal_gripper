@@ -25,9 +25,11 @@
 
 // ЗАХВАТ 
 #define GRIP_ID  8
+// ПОВОРОТ ЗАХВАТА
+#define GRIP_ROT_ID 9
 
 // НАСОС
-#define PUMP_PIN 10
+#define PUMP_PIN 15
 
 // КООРДИНАТЫ
 #define cell_Xlenght 100 //длина 1-ой ячейки по оси X в милиметрах
@@ -75,6 +77,7 @@ void setup()
     wheel_round();
 
 }
+
 //функции прерываний энкодеров оси Z
 void ZDYN1_ENC_COUNTER(){
     ZDYN1_ENC_VAL++; //первый энкодер Z
@@ -83,7 +86,7 @@ void ZDYN2_ENC_COUNTER(){
     ZDYN2_ENC_VAL++; //второй энкодер оси Z
 }
 void ZDYN3_ENC_COUNTER(){
-    ZDYN3_ENC_VAL++; //третий энкодра оси Z
+    ZDYN3_ENC_VAL++; //третий энкодер оси Z
 }
 void ZDYN4_ENC_COUNTER(){
     ZDYN4_ENC_VAL++; //четвертый энкодер оси Z
@@ -102,60 +105,30 @@ void YDYN_ENC_COUNTER(){
 void wheel_round(){
     wheel_round_L = PI * wheel_deametr;
 }
-void coordinates_to_ticks_and_goto(int nextX, int nextY){
-    int dX = 0; // дельта X
-    int dY = 0; // дельта Y
-    int dZ = 0; // дельта Z
-    float dlX = 0.0; // длина дельта X в милиметрах
-    float dlY = 0.0; // длина дельта Y в милиметрах
-    float dlZ = 0.0; // длина дельта Z в милиметрах
-    float obX = 0.0; // количество оборотов по оси Z
-    float obY = 0.0; // количество оборотов по оси Y
-    float obZ = 0.0; // количество оборотов по оси Z
-    double tiksX = 0;
-    double tiksY = 0;
-    double tiksZ = 0;
 
-    dX = max(nextX,lastX) - min(nextX,lastX); //расчет дельта X
-    dY = max(nextY,lastY) - min(nextY,lastY); //расчет дельта Y
-    dZ = max(nextZ,lastZ) - min(nextZ,lastZ); //расчет дельта Z
+int coord_to_ticks_Axis_Z(int lastZ, int nextZ){
+    int dZ = nextZ - lastZ;
+    int dlZ = dZ*cell_Zlenght;
+    double dobZ = dlZ/ wheel_round_L;
+    double tiksZ = dobZ * wheel_ticks;
 
-    lastX = nextX;
-    lastY = nextY;
-    lastZ = nextZ;
-    dlX = dX * cell_Xlenght; // расчет длины дельта X в милиметрах
-    dlY = dY * cell_Ylenght; // расчет длины дельта Y в милиметрах
-    dlZ = dZ * cell_Zlenght; // расчет длины дельта Z в милиметрах 
-
-    obX = dlX / wheel_round_L;
-    obY = dlY / wheel_round_L;
-    obZ = dlZ / wheel_round_L;
-
-    tiksX = obX * wheel_ticks;
-    tiksY = obY * wheel_ticks;
-    tiksZ = obZ * wheel_ticks;
+    return tiksZ;
 }
-void go_to_coorinates(double tiksX, double tiksY, double tiksZ, int speed){
-    bool x_dir_rev = false;
-    bool y_dir_rev = false;
-    bool z_dir_rev = false;
-    if (nextX > lastY)
-        x_dir_rev = false;
-    else 
-        x_dir_rev = true;
+int coord_to_ticks_Axis_X(int lastX, int nextX){
+    int dX = nextX - lastX;
+    int dlX = dX*cell_Xlenght;
+    double dobX = dlX/ wheel_round_L;
+    double tiksX = dobX * wheel_ticks;
 
-    if (nextY > lastY)
-        y_dir_rev = false;
-    else 
-        y_dir_rev = true;
+    return tiksX;
+}
+int coord_to_ticks_Axis_Y(int lastY, int nextY){
+    int dY = nextY - lastY;
+    int dlY = dY*cell_Zlenght;
+    double dobY = dlY/ wheel_round_L;
+    double tiksY = dobY * wheel_ticks;
 
-    if (nextZ > lastZ)
-        z_dir_rev = false;
-    else 
-        z_dir_rev = true;
-    
-    
-
+    return tiksY;
 }
 void loop()
 {

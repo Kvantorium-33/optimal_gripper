@@ -5362,7 +5362,7 @@ Created 2014-07-10, Karrer Zheng&lt;br&gt;
 <instance part="GND1" gate="GND" x="33.528" y="71.628"/>
 <instance part="GND2" gate="GND" x="83.82" y="71.628" rot="R90"/>
 <instance part="GND3" gate="GND" x="67.564" y="51.816" rot="R180"/>
-<instance part="SUPPLY4" gate="G$1" x="78.74" y="53.34"/>
+<instance part="SUPPLY4" gate="G$1" x="91.44" y="58.42"/>
 <instance part="U$2" gate="G$1" x="43.18" y="53.34"/>
 <instance part="SUPPLY5" gate="G$1" x="50.8" y="40.64" rot="R270"/>
 <instance part="R1" gate="G$1" x="35.56" y="43.18"/>
@@ -5389,8 +5389,9 @@ Created 2014-07-10, Karrer Zheng&lt;br&gt;
 </segment>
 <segment>
 <pinref part="SUPPLY4" gate="G$1" pin="12V"/>
-<pinref part="J2" gate="G$1" pin="2"/>
-<wire x1="78.74" y1="53.34" x2="93.98" y2="53.34" width="0.1524" layer="91"/>
+<wire x1="91.44" y1="58.42" x2="91.44" y2="55.88" width="0.1524" layer="91"/>
+<wire x1="91.44" y1="55.88" x2="93.98" y2="55.88" width="0.1524" layer="91"/>
+<pinref part="J2" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="3.3V" class="0">
@@ -5461,9 +5462,9 @@ Created 2014-07-10, Karrer Zheng&lt;br&gt;
 <label x="65.786" y="66.548" size="1.778" layer="95" rot="R90"/>
 </segment>
 <segment>
-<pinref part="J2" gate="G$1" pin="1"/>
-<wire x1="93.98" y1="55.88" x2="83.82" y2="55.88" width="0.1524" layer="91"/>
-<label x="86.36" y="55.88" size="1.778" layer="95"/>
+<pinref part="J2" gate="G$1" pin="2"/>
+<wire x1="93.98" y1="53.34" x2="86.36" y2="53.34" width="0.1524" layer="91"/>
+<label x="86.36" y="53.34" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="ENCODER" class="0">

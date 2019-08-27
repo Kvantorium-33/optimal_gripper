@@ -1667,14 +1667,8 @@ Copyright: Würth Elektronik</description>
 <signals>
 <signal name="12V">
 <contactref element="J1" pad="2"/>
-<wire x1="42.164" y1="12.319" x2="42.164" y2="7.112" width="1.27" layer="16"/>
-<wire x1="33.401" y1="6.858" x2="35.052" y2="8.509" width="1.27" layer="16"/>
-<wire x1="35.052" y1="8.509" x2="36.5108125" y2="8.509" width="1.27" layer="16"/>
-<wire x1="36.5108125" y1="8.509" x2="38.13090625" y2="6.88890625" width="1.27" layer="16"/>
-<wire x1="38.13090625" y1="6.88890625" x2="41.94090625" y2="6.88890625" width="1.27" layer="16"/>
-<wire x1="41.94090625" y1="6.88890625" x2="42.164" y2="7.112" width="1.27" layer="16"/>
-<contactref element="J2" pad="6"/>
-<wire x1="19.04" y1="-11.67" x2="33.401" y2="6.858" width="0" layer="19" extent="16-16"/>
+<contactref element="J2" pad="1"/>
+<wire x1="24.14" y1="-9.13" x2="42.164" y2="12.319" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="3.3V">
 <contactref element="U$1" pad="VCC"/>
@@ -1683,8 +1677,8 @@ Copyright: Würth Elektronik</description>
 <wire x1="20.701" y1="20.574" x2="20.701" y2="14.097" width="1.27" layer="16"/>
 <wire x1="22.225" y1="22.098" x2="24.638" y2="24.511" width="1.27" layer="16"/>
 <wire x1="24.638" y1="24.511" x2="38.1" y2="24.511" width="1.27" layer="16"/>
-<contactref element="J2" pad="4"/>
-<wire x1="21.08" y1="-11.67" x2="20.701" y2="14.097" width="0" layer="19" extent="16-16"/>
+<contactref element="J2" pad="3"/>
+<wire x1="22.1" y1="-9.13" x2="20.701" y2="14.097" width="0" layer="19" extent="16-16"/>
 </signal>
 <signal name="GND">
 <contactref element="J1" pad="1"/>
@@ -1698,7 +1692,6 @@ Copyright: Würth Elektronik</description>
 <wire x1="30.988" y1="17.272" x2="31.623" y2="16.637" width="1.27" layer="16"/>
 <wire x1="31.623" y1="16.637" x2="33.655" y2="16.637" width="1.27" layer="16"/>
 <wire x1="33.655" y1="16.637" x2="35.052" y2="15.24" width="1.27" layer="16"/>
-<wire x1="44.704" y1="13.208" x2="44.704" y2="12.319" width="1.27" layer="16"/>
 <wire x1="35.052" y1="15.24" x2="40.767" y2="15.24" width="1.27" layer="16"/>
 <wire x1="40.767" y1="15.24" x2="41.91" y2="15.24" width="1.27" layer="16"/>
 <wire x1="41.91" y1="15.24" x2="42.672" y2="15.24" width="1.27" layer="16"/>
@@ -1709,15 +1702,6 @@ Copyright: Würth Elektronik</description>
 <wire x1="41.402" y1="15.875" x2="40.767" y2="15.24" width="1.27" layer="16"/>
 <wire x1="41.402" y1="15.875" x2="41.402" y2="15.748" width="1.27" layer="16"/>
 <wire x1="41.402" y1="15.748" x2="41.91" y2="15.24" width="1.27" layer="16"/>
-<via x="39.37" y="8.636" extent="1-16" drill="0.9"/>
-<via x="44.704" y="8.636" extent="1-16" drill="0.9"/>
-<wire x1="44.704" y1="8.636" x2="44.704" y2="12.319" width="1.27" layer="16"/>
-<wire x1="39.37" y1="8.636" x2="44.704" y2="8.636" width="1.27" layer="1"/>
-<wire x1="37.465" y1="10.795" x2="34.417" y2="10.795" width="1.27" layer="16"/>
-<wire x1="39.37" y1="10.16" x2="39.37" y2="8.636" width="1.27" layer="16"/>
-<wire x1="37.465" y1="10.795" x2="37.4824" y2="10.7776" width="1.27" layer="16"/>
-<wire x1="37.4824" y1="10.7776" x2="38.7524" y2="10.7776" width="1.27" layer="16"/>
-<wire x1="38.7524" y1="10.7776" x2="39.37" y2="10.16" width="1.27" layer="16"/>
 <contactref element="D2" pad="K"/>
 <contactref element="D1" pad="K"/>
 <wire x1="41.402" y1="30.48" x2="41.402" y2="22.733" width="1.27" layer="16"/>
@@ -1728,16 +1712,14 @@ Copyright: Würth Elektronik</description>
 <wire x1="32.131" y1="34.29" x2="29.591" y2="31.75" width="1.27" layer="16"/>
 <wire x1="36.83" y1="34.29" x2="37.592" y2="34.29" width="1.27" layer="16"/>
 <wire x1="37.592" y1="34.29" x2="41.402" y2="30.48" width="1.27" layer="16"/>
-<contactref element="J2" pad="5"/>
-<wire x1="20.06" y1="-9.13" x2="34.417" y2="10.795" width="0" layer="19" extent="16-16"/>
+<wire x1="44.704" y1="13.208" x2="44.704" y2="12.319" width="1.27" layer="16"/>
+<contactref element="J2" pad="2"/>
+<wire x1="23.12" y1="-11.67" x2="35.052" y2="15.24" width="0" layer="19" extent="16-16"/>
 </signal>
 <signal name="RX/TX">
 <contactref element="J1" pad="3"/>
-<wire x1="30.353" y1="10.541" x2="30.353" y2="8.763" width="1.27" layer="16"/>
-<wire x1="39.624" y1="12.319" x2="32.131" y2="12.319" width="1.27" layer="16"/>
-<wire x1="32.131" y1="12.319" x2="30.353" y2="10.541" width="1.27" layer="16"/>
-<contactref element="J2" pad="3"/>
-<wire x1="22.1" y1="-9.13" x2="30.353" y2="8.763" width="0" layer="19" extent="16-16"/>
+<contactref element="J2" pad="4"/>
+<wire x1="21.08" y1="-11.67" x2="39.624" y2="12.319" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="ENCODER">
 <contactref element="U$1" pad="DO"/>
@@ -1746,9 +1728,6 @@ Copyright: Würth Elektronik</description>
 <wire x1="37.973" y1="19.304" x2="38.1" y2="19.431" width="1.27" layer="16"/>
 <wire x1="21.2725" y1="24.4475" x2="18.796" y2="21.971" width="1.27" layer="16"/>
 <wire x1="18.796" y1="21.971" x2="18.796" y2="11.049" width="1.27" layer="16"/>
-<wire x1="25.1824125" y1="7.1374" x2="26.8986" y2="7.1374" width="1.27" layer="16"/>
-<wire x1="24.7252125" y1="7.5946" x2="25.1824125" y2="7.1374" width="1.27" layer="16"/>
-<wire x1="22.2504" y1="7.5946" x2="24.7252125" y2="7.5946" width="1.27" layer="16"/>
 <wire x1="18.796" y1="11.049" x2="22.2504" y2="7.5946" width="1.27" layer="16"/>
 <contactref element="R4" pad="2"/>
 <wire x1="21.59" y1="26.67" x2="21.2725" y2="26.3525" width="1.27" layer="16"/>
@@ -1758,20 +1737,18 @@ Copyright: Würth Elektronik</description>
 <wire x1="21.59" y1="26.67" x2="33.655" y2="26.67" width="1.27" layer="16"/>
 <wire x1="33.655" y1="22.479" x2="33.655" y2="19.304" width="1.27" layer="16"/>
 <wire x1="33.655" y1="26.67" x2="33.655" y2="22.479" width="1.27" layer="1"/>
-<contactref element="J2" pad="1"/>
-<wire x1="24.14" y1="-9.13" x2="25.1824125" y2="7.1374" width="0" layer="19" extent="16-16"/>
+<contactref element="J2" pad="6"/>
+<wire x1="19.04" y1="-11.67" x2="22.2504" y2="7.5946" width="0" layer="19" extent="16-16"/>
 </signal>
 <signal name="ENDSTOP">
 <contactref element="U$2" pad="NO"/>
 <contactref element="R1" pad="2"/>
-<wire x1="26.035" y1="16.637" x2="28.194" y2="14.478" width="1.27" layer="16"/>
-<wire x1="28.194" y1="14.478" x2="28.194" y2="8.89" width="1.27" layer="16"/>
 <wire x1="22.225" y1="19.558" x2="26.035" y2="16.637" width="1.27" layer="16"/>
 <contactref element="R3" pad="1"/>
 <wire x1="22.225" y1="19.558" x2="24.892" y2="22.225" width="1.27" layer="16"/>
 <wire x1="24.892" y1="22.225" x2="30.988" y2="22.225" width="1.27" layer="16"/>
-<contactref element="J2" pad="2"/>
-<wire x1="23.12" y1="-11.67" x2="28.194" y2="8.89" width="0" layer="19" extent="16-16"/>
+<contactref element="J2" pad="5"/>
+<wire x1="20.06" y1="-9.13" x2="26.035" y2="16.637" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="N$1">
 <contactref element="R3" pad="2"/>

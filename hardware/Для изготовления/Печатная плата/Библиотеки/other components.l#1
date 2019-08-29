@@ -74,10 +74,10 @@
 <library>
 <packages>
 <package name="OPTICAL_ENCODER_FC-01">
-<pad name="VCC" x="-5.08" y="0" drill="0.9"/>
-<pad name="GND" x="-2.54" y="0" drill="0.9"/>
-<pad name="DO" x="0" y="0" drill="0.9"/>
-<pad name="AO" x="2.54" y="0" drill="0.9"/>
+<pad name="VCC" x="-5.08" y="0" drill="0.8"/>
+<pad name="GND" x="-2.54" y="0" drill="0.8"/>
+<pad name="DO" x="0" y="0" drill="0.8"/>
+<pad name="AO" x="2.54" y="0" drill="0.8"/>
 <wire x1="-7.62" y1="5.08" x2="-7.62" y2="-2.54" width="0.127" layer="21"/>
 <wire x1="-7.62" y1="-2.54" x2="5.08" y2="-2.54" width="0.127" layer="21"/>
 <wire x1="5.08" y1="-2.54" x2="5.08" y2="5.08" width="0.127" layer="21"/>

@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="50" unitdist="mil" unit="mm" style="lines" multiple="1" display="yes" altdistance="5" altunitdist="mil" altunit="mm"/>
+<grid distance="50" unitdist="mil" unit="mil" style="lines" multiple="1" display="yes" altdistance="5" altunitdist="mil" altunit="mil"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="yes"/>
@@ -74,36 +74,36 @@
 <library>
 <packages>
 <package name="OPENCM9.04">
-<pad name="RST" x="-11.43" y="22.86" drill="0.9"/>
-<pad name="5V" x="-11.43" y="20.32" drill="0.9"/>
-<pad name="3.3V" x="-11.43" y="17.78" drill="0.9"/>
-<pad name="GND" x="-11.43" y="15.24" drill="0.9"/>
-<pad name="0" x="-11.43" y="12.7" drill="0.9"/>
-<pad name="1" x="-11.43" y="10.16" drill="0.9"/>
-<pad name="2" x="-11.43" y="7.62" drill="0.9"/>
-<pad name="3" x="-11.43" y="5.08" drill="0.9"/>
-<pad name="4" x="-11.43" y="2.54" drill="0.9"/>
-<pad name="5" x="-11.43" y="0" drill="0.9"/>
-<pad name="6" x="-11.43" y="-2.54" drill="0.9"/>
-<pad name="7" x="-11.43" y="-5.08" drill="0.9"/>
-<pad name="8" x="-11.43" y="-7.62" drill="0.9"/>
-<pad name="9" x="-11.43" y="-10.16" drill="0.9"/>
-<pad name="10" x="-11.43" y="-12.7" drill="0.9"/>
-<pad name="11" x="-11.43" y="-15.24" drill="0.9"/>
-<pad name="12" x="-11.43" y="-17.78" drill="0.9"/>
-<pad name="13" x="-11.43" y="-20.32" drill="0.9"/>
-<pad name="14" x="-11.43" y="-22.86" drill="0.9"/>
-<pad name="L" x="11.43" y="5.08" drill="0.9"/>
-<pad name="15" x="-11.43" y="-25.4" drill="0.9"/>
-<pad name="16" x="11.43" y="2.54" drill="0.9"/>
-<pad name="17" x="11.43" y="0" drill="0.9"/>
-<pad name="18" x="11.43" y="-2.54" drill="0.9"/>
-<pad name="19" x="11.43" y="-5.08" drill="0.9"/>
-<pad name="20" x="11.43" y="-7.62" drill="0.9"/>
-<pad name="21" x="11.43" y="-10.16" drill="0.9"/>
-<pad name="22" x="11.43" y="-12.7" drill="0.9"/>
-<pad name="23" x="11.43" y="-15.24" drill="0.9"/>
-<pad name="24" x="11.43" y="-17.78" drill="0.9"/>
+<pad name="RST" x="-11.43" y="22.86" drill="0.8"/>
+<pad name="5V" x="-11.43" y="20.32" drill="0.8"/>
+<pad name="3.3V" x="-11.43" y="17.78" drill="0.8"/>
+<pad name="GND" x="-11.43" y="15.24" drill="0.8"/>
+<pad name="0" x="-11.43" y="12.7" drill="0.8"/>
+<pad name="1" x="-11.43" y="10.16" drill="0.8"/>
+<pad name="2" x="-11.43" y="7.62" drill="0.8"/>
+<pad name="3" x="-11.43" y="5.08" drill="0.8"/>
+<pad name="4" x="-11.43" y="2.54" drill="0.8"/>
+<pad name="5" x="-11.43" y="0" drill="0.8"/>
+<pad name="6" x="-11.43" y="-2.54" drill="0.8"/>
+<pad name="7" x="-11.43" y="-5.08" drill="0.8"/>
+<pad name="8" x="-11.43" y="-7.62" drill="0.8"/>
+<pad name="9" x="-11.43" y="-10.16" drill="0.8"/>
+<pad name="10" x="-11.43" y="-12.7" drill="0.8"/>
+<pad name="11" x="-11.43" y="-15.24" drill="0.8"/>
+<pad name="12" x="-11.43" y="-17.78" drill="0.8"/>
+<pad name="13" x="-11.43" y="-20.32" drill="0.8"/>
+<pad name="14" x="-11.43" y="-22.86" drill="0.8"/>
+<pad name="L" x="11.43" y="5.08" drill="0.8"/>
+<pad name="15" x="-11.43" y="-25.4" drill="0.8"/>
+<pad name="16" x="11.43" y="2.54" drill="0.8"/>
+<pad name="17" x="11.43" y="0" drill="0.8"/>
+<pad name="18" x="11.43" y="-2.54" drill="0.8"/>
+<pad name="19" x="11.43" y="-5.08" drill="0.8"/>
+<pad name="20" x="11.43" y="-7.62" drill="0.8"/>
+<pad name="21" x="11.43" y="-10.16" drill="0.8"/>
+<pad name="22" x="11.43" y="-12.7" drill="0.8"/>
+<pad name="23" x="11.43" y="-15.24" drill="0.8"/>
+<pad name="24" x="11.43" y="-17.78" drill="0.8"/>
 <wire x1="-13.51" y1="-29.86" x2="-13.51" y2="31.14" width="0.127" layer="21"/>
 <wire x1="13.49" y1="30.14" x2="13.49" y2="-31.11" width="0.127" layer="21"/>
 <wire x1="-13.51" y1="31.14" x2="-11.26" y2="33.39" width="0.127" layer="21" curve="-90"/>
@@ -144,16 +144,16 @@
 <wire x1="5.49" y1="27.14" x2="5.49" y2="22.14" width="0.254" layer="21"/>
 <wire x1="5.49" y1="22.14" x2="-0.01" y2="22.14" width="0.254" layer="21"/>
 <text x="-1.26" y="-32.36" size="1.27" layer="21">USB</text>
-<pad name="VCC" x="11.43" y="22.86" drill="0.9"/>
-<pad name="VCC2" x="11.43" y="20.32" drill="0.9"/>
-<pad name="GND2" x="11.43" y="17.78" drill="0.9"/>
-<pad name="GND3" x="11.43" y="15.24" drill="0.9"/>
-<pad name="TTL" x="11.43" y="12.7" drill="0.9"/>
-<pad name="D" x="11.43" y="10.16" drill="0.9"/>
-<pad name="X" x="11.43" y="7.62" drill="0.9"/>
-<pad name="25" x="11.43" y="-20.32" drill="0.9"/>
-<pad name="5V2" x="11.43" y="-22.86" drill="0.9"/>
-<pad name="AREF" x="11.43" y="-25.4" drill="0.9"/>
+<pad name="VCC" x="11.43" y="22.86" drill="0.8"/>
+<pad name="VCC2" x="11.43" y="20.32" drill="0.8"/>
+<pad name="GND2" x="11.43" y="17.78" drill="0.8"/>
+<pad name="GND3" x="11.43" y="15.24" drill="0.8"/>
+<pad name="TTL" x="11.43" y="12.7" drill="0.8"/>
+<pad name="D" x="11.43" y="10.16" drill="0.8"/>
+<pad name="X" x="11.43" y="7.62" drill="0.8"/>
+<pad name="25" x="11.43" y="-20.32" drill="0.8"/>
+<pad name="5V2" x="11.43" y="-22.86" drill="0.8"/>
+<pad name="AREF" x="11.43" y="-25.4" drill="0.8"/>
 <text x="-10.16" y="22.86" size="1.27" layer="21">RST</text>
 <text x="-10.16" y="20.32" size="1.27" layer="21">5V</text>
 <text x="-10.16" y="17.78" size="1.27" layer="21">3.3V</text>

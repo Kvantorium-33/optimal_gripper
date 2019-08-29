@@ -3,7 +3,7 @@
 <eagle version="9.0.0">
 <drawing>
 <settings>
-<setting alwaysvectorfont="no"/>
+<setting alwaysvectorfont="yes"/>
 <setting verticaltext="up"/>
 </settings>
 <grid distance="50" unitdist="mil" unit="mm" style="lines" multiple="1" display="no" altdistance="5" altunitdist="mil" altunit="mm"/>
@@ -1471,7 +1471,7 @@ for trimmer refence see : &lt;u&gt;www.electrospec-inc.com/cross_references/trim
 &lt;/table&gt;
 &lt;/BODY&gt;&lt;/HTML&gt;</description>
 <packages>
-<package name="0204/7" urn="urn:adsk.eagle:footprint:25507/1" library_version="1">
+<package name="0204/7" urn="urn:adsk.eagle:footprint:25507/1" locally_modified="yes" library_version="1" library_locally_modified="yes">
 <description>&lt;b&gt;RESISTOR&lt;/b&gt;&lt;p&gt;
 type 0204, grid 7.5 mm</description>
 <wire x1="3.81" y1="0" x2="2.921" y2="0" width="0.508" layer="51"/>
@@ -1492,8 +1492,8 @@ type 0204, grid 7.5 mm</description>
 <wire x1="2.286" y1="1.016" x2="1.905" y2="1.016" width="0.1524" layer="21"/>
 <wire x1="2.286" y1="-1.016" x2="1.905" y2="-1.016" width="0.1524" layer="21"/>
 <wire x1="2.54" y1="-0.762" x2="2.54" y2="0.762" width="0.1524" layer="21"/>
-<pad name="1" x="-3.81" y="0" drill="0.8128" shape="octagon"/>
-<pad name="2" x="3.81" y="0" drill="0.8128" shape="octagon"/>
+<pad name="1" x="-3.81" y="0" drill="0.9" diameter="1.9304" shape="octagon"/>
+<pad name="2" x="3.81" y="0" drill="0.9" diameter="1.9304" shape="octagon"/>
 <text x="-2.54" y="1.2954" size="0.9906" layer="25" ratio="10">&gt;NAME</text>
 <text x="-1.6256" y="-0.4826" size="0.9906" layer="27" ratio="10">&gt;VALUE</text>
 <rectangle x1="2.54" y1="-0.254" x2="2.921" y2="0.254" layer="21"/>
@@ -1501,7 +1501,7 @@ type 0204, grid 7.5 mm</description>
 </package>
 </packages>
 <packages3d>
-<package3d name="0204/7" urn="urn:adsk.eagle:package:25945/1" type="box" library_version="1">
+<package3d name="0204/7" urn="urn:adsk.eagle:package:25945/1" locally_modified="yes" type="box" library_version="1" library_locally_modified="yes">
 <description>RESISTOR
 type 0204, grid 7.5 mm</description>
 <packageinstances>
@@ -1935,7 +1935,7 @@ Comments, suggestions and bug reports please send to: &lt;b&gt;&lt;a href="mailt
 <element name="J8" library="Wurth_Elektronik_Electromechanic_Input-Output_Connectors_rev16a" package="615006138421" value="" x="6.35" y="34.29" rot="R270"/>
 <element name="J9" library="Wurth_Elektronik_Electromechanic_Input-Output_Connectors_rev16a" package="615006138421" value="" x="6.35" y="3.81" rot="R270"/>
 <element name="Q1" library="transistor-power" library_urn="urn:adsk.eagle:library:400" package="TO220BV" package3d_urn="urn:adsk.eagle:package:29484/3" value="IRF540" x="74.93" y="-5.08"/>
-<element name="R1" library="resistor" library_urn="urn:adsk.eagle:library:348" package="0204/7" package3d_urn="urn:adsk.eagle:package:25945/1" value="100" x="58.039" y="-0.762" rot="R180"/>
+<element name="R1" library="resistor" library_urn="urn:adsk.eagle:library:348" package="0204/7" package3d_urn="urn:adsk.eagle:package:25945/1" value="100" x="58.039" y="-1.778" rot="R180"/>
 <element name="R3" library="resistor" library_urn="urn:adsk.eagle:library:348" package="0204/7" package3d_urn="urn:adsk.eagle:package:25945/1" value="330" x="19.812" y="6.731" rot="R270"/>
 <element name="R4" library="resistor" library_urn="urn:adsk.eagle:library:348" package="0204/7" package3d_urn="urn:adsk.eagle:package:25945/1" value="330" x="22.225" y="6.731" rot="R270"/>
 <element name="R5" library="resistor" library_urn="urn:adsk.eagle:library:348" package="0204/7" package3d_urn="urn:adsk.eagle:package:25945/1" value="330" x="24.765" y="6.731" rot="R270"/>
@@ -2447,7 +2447,7 @@ Comments, suggestions and bug reports please send to: &lt;b&gt;&lt;a href="mailt
 <contactref element="R1" pad="2"/>
 <contactref element="U$1" pad="25"/>
 <wire x1="50.8" y1="8.89" x2="54.229" y2="5.461" width="1.27" layer="16"/>
-<wire x1="54.229" y1="5.461" x2="54.229" y2="-0.762" width="1.27" layer="16"/>
+<wire x1="54.229" y1="5.461" x2="54.229" y2="-1.778" width="1.27" layer="16"/>
 </signal>
 <signal name="N$1">
 <contactref element="J11" pad="P$1"/>
@@ -2463,7 +2463,7 @@ Comments, suggestions and bug reports please send to: &lt;b&gt;&lt;a href="mailt
 <contactref element="Q1" pad="G"/>
 <via x="64.389" y="-2.159" extent="1-16" drill="0.9"/>
 <via x="64.389" y="-5.334" extent="1-16" drill="0.9"/>
-<wire x1="61.849" y1="-0.762" x2="62.23" y2="-2.159" width="1.27" layer="16"/>
+<wire x1="61.849" y1="-1.778" x2="62.23" y2="-2.159" width="1.27" layer="16"/>
 <wire x1="62.23" y1="-2.159" x2="64.389" y2="-2.159" width="1.27" layer="16"/>
 <wire x1="64.389" y1="-5.334" x2="70.104" y2="-5.334" width="1.27" layer="16"/>
 <wire x1="70.104" y1="-5.334" x2="72.39" y2="-7.62" width="1.27" layer="16"/>

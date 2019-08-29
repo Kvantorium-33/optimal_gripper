@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="10" unitdist="mm" unit="mm" style="lines" multiple="1" display="no" altdistance="5" altunitdist="mil" altunit="mm"/>
+<grid distance="1" unitdist="mm" unit="mm" style="lines" multiple="1" display="no" altdistance="0.1" altunitdist="mm" altunit="mm"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
@@ -158,15 +158,14 @@
 </layers>
 <board>
 <plain>
-<wire x1="16.129" y1="-1.143" x2="46.533" y2="-1.143" width="0" layer="20"/>
-<wire x1="46.533" y1="-1.143" x2="46.533" y2="66.947" width="0" layer="20"/>
-<wire x1="46.533" y1="66.947" x2="16.129" y2="66.947" width="0" layer="20"/>
-<wire x1="16.129" y1="66.947" x2="16.129" y2="-1.143" width="0" layer="20"/>
+<wire x1="16.129" y1="-1.143" x2="48.533" y2="-1.143" width="0" layer="20"/>
+<wire x1="48.533" y1="-1.143" x2="48.533" y2="36.947" width="0" layer="20"/>
+<wire x1="48.533" y1="36.947" x2="16.129" y2="36.947" width="0" layer="20"/>
+<wire x1="16.129" y1="36.947" x2="16.129" y2="-1.143" width="0" layer="20"/>
 <hole x="17.907" y="34.925" drill="3"/>
-<hole x="17.907" y="0.762" drill="3"/>
-<hole x="44.577" y="0.762" drill="3"/>
-<hole x="44.704" y="35.052" drill="3"/>
-<hole x="31.496" y="53.848" drill="8.2"/>
+<hole x="45.904" y="34.852" drill="3"/>
+<hole x="17.907" y="0.925" drill="3"/>
+<hole x="45.904" y="0.852" drill="3"/>
 </plain>
 <libraries>
 <library name="molex">
@@ -1266,7 +1265,7 @@ for trimmer refence see : &lt;u&gt;www.electrospec-inc.com/cross_references/trim
 &lt;/table&gt;
 &lt;/BODY&gt;&lt;/HTML&gt;</description>
 <packages>
-<package name="0204/7" urn="urn:adsk.eagle:footprint:25507/1" library_version="1">
+<package name="0204/7" urn="urn:adsk.eagle:footprint:25507/1" locally_modified="yes" library_version="1" library_locally_modified="yes">
 <description>&lt;b&gt;RESISTOR&lt;/b&gt;&lt;p&gt;
 type 0204, grid 7.5 mm</description>
 <wire x1="3.81" y1="0" x2="2.921" y2="0" width="0.508" layer="51"/>
@@ -1287,8 +1286,8 @@ type 0204, grid 7.5 mm</description>
 <wire x1="2.286" y1="1.016" x2="1.905" y2="1.016" width="0.1524" layer="21"/>
 <wire x1="2.286" y1="-1.016" x2="1.905" y2="-1.016" width="0.1524" layer="21"/>
 <wire x1="2.54" y1="-0.762" x2="2.54" y2="0.762" width="0.1524" layer="21"/>
-<pad name="1" x="-3.81" y="0" drill="0.8128" shape="octagon"/>
-<pad name="2" x="3.81" y="0" drill="0.8128" shape="octagon"/>
+<pad name="1" x="-3.81" y="0" drill="0.9" diameter="1.9304" shape="octagon"/>
+<pad name="2" x="3.81" y="0" drill="0.9" diameter="1.9304" shape="octagon"/>
 <text x="-2.54" y="1.2954" size="0.9906" layer="25" ratio="10">&gt;NAME</text>
 <text x="-1.6256" y="-0.4826" size="0.9906" layer="27" ratio="10">&gt;VALUE</text>
 <rectangle x1="2.54" y1="-0.254" x2="2.921" y2="0.254" layer="21"/>
@@ -1296,7 +1295,7 @@ type 0204, grid 7.5 mm</description>
 </package>
 </packages>
 <packages3d>
-<package3d name="0204/7" urn="urn:adsk.eagle:package:25945/1" type="box" library_version="1">
+<package3d name="0204/7" urn="urn:adsk.eagle:package:25945/1" locally_modified="yes" type="box" library_version="1" library_locally_modified="yes">
 <description>RESISTOR
 type 0204, grid 7.5 mm</description>
 <packageinstances>

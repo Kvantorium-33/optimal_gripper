@@ -1,0 +1,16 @@
+<package>
+  <name>smart_gripper</name>
+  <version>0.4.0</version>
+
+  <description>This package contains SmartGripper robot nodes and models.</description>
+  <author email="project@kvantorium33.ru">Kvantorium-33</author>
+  <maintainer email="project@kvantorium33.ru">Kvantorium-33</maintainer>
+  <license>BSD</license>
+  <url>http://kvantorium33.ru</url>
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roslaunch</build_depend>
+  <run_depend>joint_state_publisher</run_depend>
+  <run_depend>robot_state_publisher</run_depend>
+  <run_depend>rviz</run_depend>
+  <run_depend>xacro</run_depend>
+</package>

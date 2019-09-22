@@ -1,0 +1,205 @@
+<?xml version="1.0"?>
+<robot name="SmartGripper" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:property name="pi" value="3.1415" />
+  <xacro:property name="profile_size" value="0.032" />
+  <xacro:property name="profile_length" value="0.7" />
+  <xacro:property name="profile_mass" value="0.3" />
+  <xacro:property name="base_size" value="0.01" />
+  <xacro:property name="carret_size" value="0.05" />
+  <xacro:property name="carret_width" value="0.01" />
+  <xacro:property name="carret_offset" value="${profile_size/2 + carret_width + 0.002}" />
+  <xacro:property name="link_z_length" value="${profile_length - carret_offset}" />
+  <xacro:property name="link_y_length" value="${profile_length - carret_offset}" />
+
+
+  <material name="blue">
+    <color rgba="0 0 0.8 1"/>
+  </material>
+
+  <material name="black">
+    <color rgba="0 0 0 1"/>
+  </material>
+
+  <material name="white">
+    <color rgba="1 1 1 1"/>
+  </material>
+
+  <material name="gray">
+    <color rgba="0.7 0.7 0.7 1"/>
+  </material>
+
+  <xacro:macro name="default_inertial" params="mass">
+    <inertial>
+      <mass value="${mass}" />
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+    </inertial>
+  </xacro:macro>
+
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="${profile_length+2*profile_size} ${profile_length+2*profile_size} ${base_size}"/>
+      </geometry>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${profile_length+2*profile_size} ${profile_length+2*profile_size} ${base_size}"/>
+      </geometry>
+    </collision>
+    <xacro:default_inertial mass="1"/>
+  </link>
+
+  <xacro:macro name="frame_corner" params="num parent xyz">
+    <link name="frame_c${num}">
+      <visual>
+        <geometry>
+          <box size="${profile_size} ${profile_size} ${profile_size}"/>
+        </geometry>
+        <material name="white"/>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="${profile_size} ${profile_size} ${profile_size}"/>
+        </geometry>
+      </collision>
+      <xacro:default_inertial mass="0"/>
+    </link>
+    <joint name="${parent}_to_frame_c${num}" type="fixed">
+      <parent link="${parent}"/>
+      <child link="frame_c${num}"/>
+      <origin xyz="${xyz}" />
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="frame_link" params="num len parent xyz rpy">
+    <link name="frame_l${num}">
+      <visual>
+        <geometry>
+          <box size="${profile_size} ${profile_size} ${len}"/>
+        </geometry>
+        <material name="gray"/>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="${profile_size} ${profile_size} ${len}"/>
+        </geometry>
+      </collision>
+      <xacro:default_inertial mass="${profile_mass}"/>
+    </link>
+    <joint name="${parent}_to_frame_l${num}" type="fixed">
+      <parent link="${parent}"/>
+      <child link="frame_l${num}"/>
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:macro name="carret" params="num">
+    <link name="carret_${num}">
+      <visual>
+        <geometry>
+          <box size="${carret_size} ${carret_size} ${carret_width}"/>
+        </geometry>
+        <origin xyz="0 0 ${carret_width/2}"/>
+        <material name="blue"/>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="${carret_size} ${carret_size} ${carret_width}"/>
+        </geometry>
+        <origin xyz="0 0 ${carret_width/2}"/>
+      </collision>
+      <xacro:default_inertial mass="0"/>
+    </link>
+  </xacro:macro>
+
+  <xacro:frame_corner num="1" parent="base_link" xyz="${-(profile_length+profile_size)/2} ${-(profile_length+profile_size)/2} ${(base_size+profile_size)/2}" />
+  <xacro:frame_corner num="2" parent="base_link" xyz="${(profile_length+profile_size)/2} ${-(profile_length+profile_size)/2} ${(base_size+profile_size)/2}" />
+  <xacro:frame_corner num="3" parent="base_link" xyz="${-(profile_length+profile_size)/2} ${(profile_length+profile_size)/2} ${(base_size+profile_size)/2}" />
+  <xacro:frame_corner num="4" parent="base_link" xyz="${(profile_length+profile_size)/2} ${(profile_length+profile_size)/2} ${(base_size+profile_size)/2}" />
+
+  <xacro:frame_link num="1" parent="frame_c1" len="${profile_length}" xyz="0 0 ${(profile_length+profile_size)/2}" rpy="0 0 0"/>
+  <xacro:frame_link num="2" parent="frame_c2" len="${profile_length}" xyz="0 0 ${(profile_length+profile_size)/2}" rpy="0 0 0"/>
+  <xacro:frame_link num="3" parent="frame_c3" len="${profile_length}" xyz="0 0 ${(profile_length+profile_size)/2}" rpy="0 0 0"/>
+  <xacro:frame_link num="4" parent="frame_c4" len="${profile_length}" xyz="0 0 ${(profile_length+profile_size)/2}" rpy="0 0 0"/>
+
+  <xacro:frame_link num="5" parent="frame_c1" len="${profile_length}" xyz="${(profile_length+profile_size)/2} 0 0" rpy="0 ${pi/2} 0"/>
+  <xacro:frame_link num="6" parent="frame_c2" len="${profile_length}" xyz="0 ${(profile_length+profile_size)/2} 0" rpy="${pi/2} 0 0"/>
+  <xacro:frame_link num="7" parent="frame_c3" len="${profile_length}" xyz="${(profile_length+profile_size)/2} 0 0" rpy="0 ${pi/2} 0"/>
+  <xacro:frame_link num="8" parent="frame_c1" len="${profile_length}" xyz="0 ${(profile_length+profile_size)/2} 0" rpy="${pi/2} 0 0"/>
+
+  <xacro:frame_corner num="5" parent="frame_l1" xyz="0 0 ${(profile_length+profile_size)/2}"/>
+  <xacro:frame_corner num="6" parent="frame_l2" xyz="0 0 ${(profile_length+profile_size)/2}"/>
+  <xacro:frame_corner num="7" parent="frame_l3" xyz="0 0 ${(profile_length+profile_size)/2}"/>
+  <xacro:frame_corner num="8" parent="frame_l4" xyz="0 0 ${(profile_length+profile_size)/2}"/>
+
+  <xacro:frame_link num="9"  parent="frame_c5" len="${profile_length}" xyz="${(profile_length+profile_size)/2} 0 0" rpy="0 ${pi/2} 0"/>
+  <xacro:frame_link num="10" parent="frame_c6" len="${profile_length}" xyz="0 ${(profile_length+profile_size)/2} 0" rpy="${pi/2} 0 0"/>
+  <xacro:frame_link num="11" parent="frame_c7" len="${profile_length}" xyz="${(profile_length+profile_size)/2} 0 0" rpy="0 ${pi/2} 0"/>
+  <xacro:frame_link num="12" parent="frame_c5" len="${profile_length}" xyz="0 ${(profile_length+profile_size)/2} 0" rpy="${pi/2} 0 0"/>
+
+  <xacro:carret num="z1"/>
+  <xacro:carret num="z2"/>
+  <xacro:carret num="z3"/>
+  <xacro:carret num="z4"/>
+
+  <xacro:frame_link num="z1" parent="carret_z1" len="${link_z_length}" xyz="0 0 ${-link_z_length/2}" rpy="0 0 0"/>
+  <xacro:frame_link num="z2" parent="carret_z2" len="${link_z_length}" xyz="0 0 ${-link_z_length/2}" rpy="0 0 0"/>
+
+  <joint name="Z" type="prismatic">
+    <parent link="frame_l1"/>
+    <child link="carret_z1"/>
+    <limit effort="1000.0" lower="0" upper="0.6" velocity="0.5"/>
+    <origin rpy="${pi/2} ${-pi/2} 0" xyz="0 ${carret_offset} -0.3"/>
+  </joint>
+
+  <joint name="carret_z1_to_carret_z2" type="fixed">
+    <parent link="carret_z1"/>
+    <child link="carret_z2"/>
+    <origin xyz="0 ${-profile_length-profile_size} 0"/>
+  </joint>
+
+  <joint name="link_z1_to_carret_z3" type="fixed">
+    <parent link="frame_lz1"/>
+    <child link="carret_z3"/>
+    <origin rpy="${pi} 0 0" xyz="0 0 ${-link_z_length/2}"/>
+  </joint>
+
+  <joint name="link_z2_to_carret_z4" type="fixed">
+    <parent link="frame_lz2"/>
+    <child link="carret_z4"/>
+    <origin rpy="${pi} 0 0" xyz="0 0 ${-link_z_length/2}"/>
+  </joint>
+
+  <xacro:carret num="y1"/>
+  <xacro:carret num="y2"/>
+  <xacro:frame_link num="y" parent="carret_y1" len="${link_y_length}" xyz="0 0 ${-link_y_length/2}" rpy="0 0 0"/>
+
+  <joint name="Y" type="prismatic">
+    <parent link="frame_lz2"/>
+    <child link="carret_y1"/>
+    <limit effort="1000.0" lower="0" upper="0.6" velocity="0.5"/>
+    <origin rpy="${pi/2} ${-pi/2} 0" xyz="0 ${carret_offset} -0.3"/>
+  </joint>
+  <joint name="link_y2_to_carret_y2" type="fixed">
+    <parent link="frame_ly"/>
+    <child link="carret_y2"/>
+    <origin rpy="${pi} 0 0" xyz="0 0 ${-link_y_length/2}"/>
+  </joint>
+
+  <xacro:carret num="x"/>
+  <joint name="X" type="prismatic">
+    <parent link="frame_ly"/>
+    <child link="carret_x"/>
+    <limit effort="1000.0" lower="0" upper="0.6" velocity="0.5"/>
+    <origin rpy="${pi/2} ${-pi/2} 0" xyz="0 ${carret_offset} -0.3"/>
+  </joint>
+
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/</robotNamespace>
+    </plugin>
+  </gazebo>
+
+</robot>

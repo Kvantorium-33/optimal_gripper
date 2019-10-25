@@ -3,14 +3,15 @@
         {
             "name": "Win32",
             "includePath": [
+                "C:\\Program Files (x86)\\Arduino\\tools\\**",
+                "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\**",
                 "C:\\Users\\Петров Иван\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\tools\\**",
                 "C:\\Users\\Петров Иван\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\hardware\\OpenCM904\\1.4.2\\**",
                 "C:\\Users\\user\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\hardware\\OpenCM904\\1.4.0\\**",
                 "C:\\Users\\user\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\tools\\**"
             ],
             "forcedInclude": [
-                "C:\\Users\\Петров Иван\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\hardware\\OpenCM904\\1.4.2\\cores\\arduino\\Arduino.h",
-                "C:\\Users\\user\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\hardware\\OpenCM904\\1.4.0\\cores\\arduino\\Arduino.h"
+                "C:\\Users\\Петров Иван\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\hardware\\OpenCM904\\1.4.2\\cores\\arduino\\Arduino.h"
             ],
             "intelliSenseMode": "msvc-x64"
         }

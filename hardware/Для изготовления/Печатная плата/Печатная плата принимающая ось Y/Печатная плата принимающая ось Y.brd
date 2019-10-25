@@ -166,6 +166,8 @@
 <hole x="45.904" y="34.852" drill="3"/>
 <hole x="17.907" y="0.925" drill="3"/>
 <hole x="45.904" y="0.852" drill="3"/>
+<dimension x1="17.907" y1="0.925" x2="45.904" y2="0.852" x3="31.89545625" y3="-2.963225" textsize="1.778" layer="1"/>
+<dimension x1="45.904" y1="34.852" x2="45.904" y2="0.852" x3="54" y3="17.852" textsize="1.778" layer="1"/>
 </plain>
 <libraries>
 <library name="molex">

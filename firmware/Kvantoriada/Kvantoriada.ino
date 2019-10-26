@@ -120,14 +120,16 @@ void DXL_init() // ФУНКЦИЯ ИНИЦИАЛИЗАЦИИ ШИНЫ DXL
 }
 
 void servomotors_init() // ФУНКЦИЯ ИНИЦИАЛИЗАЦИИ СЕРВОМОТОРОВ
-{
+{   int count = 0;
     for (uint8_t i = 0; i < Conf.motor_count; i++)
     {
         bool ping_check = false;
-        while(!ping_check)
+        while(!ping_check || count != 300)
         {
             ///// ТЕКСТОВОЕ СОПРОВОЖДЕНИЕ
             Dxl.ping(Conf.id_ar[i], &Conf.model_number, &Conf.log);
+
+             count++;
         }   
         ///// ТЕКСТОВОЕ СОПРОВОЖДЕНИЕ  
         bool change_mode = false;

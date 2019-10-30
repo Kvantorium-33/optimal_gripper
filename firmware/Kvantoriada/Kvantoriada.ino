@@ -131,9 +131,10 @@ void servomotors_init() // ФУНКЦИЯ ИНИЦИАЛИЗАЦИИ СЕРВО�
 
              count++;
         }   
-        ///// ТЕКСТОВОЕ СОПРОВОЖДЕНИЕ  
+        ///// ТЕКСТОВОЕ СОПРОВОЖДЕНИЕ 
+        count = 0; 
         bool change_mode = false;
-        while(!change_mode)
+        while(!change_mode || count != 300)
         {
             Dxl.wheelMode(Conf.id_ar[i], Conf.id_accel_ar[i], &Conf.log);
          ///// ТЕКСТОВОЕ СОПРОВОЖДЕНИЕ 
@@ -316,15 +317,14 @@ void gotuda(int Xcor, int Ycor, int Zcor) // ФУНКЦИЯ ПЕРЕМЕЩЕНИ
         {
             
         } while   (X1.encoder_counter() != needTiks[X_] && X2.encoder_counter() != needTiks[X_] && Y.encoder_counter() != needTiks[Y_] && 
-                Z1.encoder_counter() != needTiks[Z_] && Z2.encoder_counter() != needTiks[Z_] && Z3.encoder_counter() != needTiks[Z_] && Z4.encoder_counter() != needTiks[Z_]);
+        Z1.encoder_counter() != needTiks[Z_] && Z2.encoder_counter() != needTiks[Z_] && Z3.encoder_counter() != needTiks[Z_] && Z4.encoder_counter() != needTiks[Z_]);
 }
 
 void com_init() // ФУНКЦИЯ ИНИЦИАЛИЗАЦИИ ПОСЛЕДОВАТЕЛЬНО ПОРТА
 {   
-    if (COM != SerialUSB)
-        COM.begin(Conf.COM_BAUDRATE);
+    
 
-    COM.println("Connection ready");
+ 
 };
 
 void print_endstop_status(int chooseEnds = 3) // ФУНКЦИЯ ВЫВОДА СОСТОЯНИЙ КОНЦЕВИКОВ ( ЕСТЬ ВЫБОР ОСИ: ВСЕ;X;Y;Z)

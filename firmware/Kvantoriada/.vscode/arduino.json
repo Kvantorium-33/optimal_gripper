@@ -1,6 +1,0 @@
-{
-    "board": "OpenCM904:OpenCM904:OpenCM904",
-    "configuration": "upload_method=UploadMethod",
-    "sketch": "Kvantoriada.ino",
-    "port": "COM39"
-}

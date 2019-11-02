@@ -1,0 +1,6 @@
+{
+    "sketch": "Kvantoriada_MEGA.ino",
+    "port": "COM39",
+    "board": "arduino:avr:mega",
+    "configuration": "cpu=atmega2560"
+}

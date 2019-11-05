@@ -4,12 +4,18 @@
             "name": "Win32",
             "includePath": [
                 "C:\\Users\\Петров Иван\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\**",
-                "C:\\Users\\Петров Иван\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.1\\**"
+                "C:\\Users\\Петров Иван\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.1\\**",
+                "C:\\Program Files (x86)\\Arduino\\tools\\**",
+                "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\**",
+                "C:\\Users\\Петров Иван\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\tools\\**",
+                "C:\\Users\\Петров Иван\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\hardware\\OpenCM904\\1.4.2\\**",
+                "C:\\Users\\user\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\hardware\\OpenCM904\\1.4.0\\**",
+                "C:\\Users\\user\\AppData\\Local\\Arduino15\\packages\\OpenCM904\\tools\\**"
             ],
             "forcedInclude": [
                 "C:\\Users\\Петров Иван\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.1\\cores\\arduino\\Arduino.h"
             ],
-            "intelliSenseMode": "clang-x64"
+            "intelliSenseMode": "msvc-x64"
         }
     ],
     "version": 4

@@ -14,4 +14,14 @@ void Axis::Ainit(int _id_, int _encp_, int _endp_)
     _endp = _endp_;
 
     pinMode(_encp, INPUT_PULLUP);
-}
+};
+
+bool Axis::endstop_check()
+{
+
+};
+
+int Axis::encoder_counter()
+{
+
+};

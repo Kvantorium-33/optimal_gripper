@@ -14,9 +14,8 @@ private:
 public:
 
     Axis();
-    ~Axis();
     void Ainit(int _id_, int _encp_, int _endp_);
-    boolean endstop_check();
-    unsigned int encoder_counter();
+    bool endstop_check();
+    int encoder_counter();
 };
 #endif

@@ -1,6 +1,6 @@
 
-#define COM Serial2                                                 // BLUETOOTH
-//#define COM SerialUSB                                             // USB
+//#define COM Serial2                                                // BLUETOOTH
+#define COM Serial                                                   // USB
 ////////////////// ПОДКЛЮЧЕНИЕ РАБОЧИХ БИБЛИОТЕК ///////////////////////
 #include <Axis.h>                                                   // БИБЛИОТЕКА ОСЕЙ 
 #include <Workspace.h>                                              // БИБЛИОТЕКА РАБОЧЕГО ПРОСТРАНСТВА
@@ -165,55 +165,55 @@ void print_encoders_val(int chooseEnc = 3) // ФУНКЦИЯ ВЫВОДА КОЛ
     {
         case X_:
             COM.print("X1_enc:");
-            COM.print(X1.encoder_counter());
+            COM.print(X1.getTiks());
             COM.print(" ");
             COM.print("X2_enc:");
-            COM.print(X2.encoder_counter());
+            COM.print(X2.getTiks());
             COM.println(" ");
             break;
 
         case Y_:
             COM.print("Y_enc:");
-            COM.print(Y.encoder_counter());
+            COM.print(Y.getTiks());
             COM.println(" ");
             break;
         
         case Z_:
             COM.print("Z1_enc");
-            COM.print(Z1.encoder_counter());
+            COM.print(Z1.getTiks());
             COM.print(" ");
             COM.print("Z2_enc");
-            COM.print(Z2.encoder_counter());
+            COM.print(Z2.getTiks());
             COM.print(" ");
             COM.print("Z3_enc");
-            COM.print(Z3.encoder_counter());
+            COM.print(Z3.getTiks());
             COM.print(" ");
             COM.print("Z4_enc");
-            COM.print(Z4.encoder_counter());
+            COM.print(Z4.getTiks());
             COM.println(" ");
             break;
         
         case All:
             COM.print("X1_enc:");
-            COM.print(X1.encoder_counter());
+            COM.print(X1.getTiks());
             COM.print(" ");
             COM.print("X2_enc:");
-            COM.print(X2.encoder_counter());
+            COM.print(X2.getTiks());
             COM.print(" ");
             COM.print("Y_enc:");
-            COM.print(Y.encoder_counter());
+            COM.print(Y.getTiks());
             COM.print(" ");
             COM.print("Z1_enc:");
-            COM.print(Z1.encoder_counter());
+            COM.print(Z1.getTiks());
             COM.print(" ");
             COM.print("Z2_enc:");
-            COM.print(Z2.encoder_counter());
+            COM.print(Z2.getTiks());
             COM.print(" ");
             COM.print("Z3_enc:");
-            COM.print(Z3.encoder_counter());
+            COM.print(Z3.getTiks());
             COM.print(" ");
             COM.print("Z4_enc:");
-            COM.println(Z4.encoder_counter());
+            COM.println(Z4.getTiks());
             break;      
     }
 }

@@ -4,29 +4,29 @@
     class Mathematics
     {
     private:
-        uint8_t _wheelD = 0;
-        uint8_t _wheelT = 0;
+        int  _wheelD = 0;
+        int  _wheelT = 0;
         float _wheelR = 0;
-        uint8_t _ws_size[3];
-        uint8_t _cell_size[3];
+        int  _ws_size[3];
+        int  _cell_size[3];
 
-        uint8_t DeltaCor = 0;
-        uint8_t DeltaCor_Long[3];
-        uint8_t DeltaCor_Turns[3];
-        uint8_t DeltaCor_Ticks[3];
+        int  DeltaCor = 0;
+        int  DeltaCor_Long[3];
+        int  DeltaCor_Turns[3];
+        int  DeltaCor_Ticks[3];
 
-        const uint8_t _X_ = 0;
-        const uint8_t _Y_ = 1;
-        const uint8_t _Z_ = 2;
+        const int  _X_ = 0;
+        const int  _Y_ = 1;
+        const int  _Z_ = 2;
 
 
     public:
         Mathematics();
-        void setWheelDeametr(uint8_t wD = 0);
-        void setWheelTiks(uint8_t wT = 0);
-        void putWSs(uint8_t wsX, uint8_t wsY, uint8_t wsZ);
-        void puCells(uint8_t cX, uint8_t cY, uint8_t cZ);
-        uint8_t getTicks(uint8_t chooseA, uint8_t nextCor, uint8_t lastCor);
+        void setWheelDeametr(int  wD = 0);
+        void setWheelTiks(int  wT = 0);
+        void putWSs(int  wsX, int  wsY, int  wsZ);
+        void puCells(int  cX, int  cY, int  cZ);
+        int  getTicks(int  chooseA, int  nextCor, int  lastCor);
 
     };
     

@@ -5,24 +5,24 @@ Mathematics::Mathematics()
 
 };
 
-void Mathematics::setWheelDeametr(uint8_t wD = 0)
+void Mathematics::setWheelDeametr(int  wD = 0)
 {
     _wheelD = wD;
-    _wheelR = _wheelD * PI;
+    _wheelR = _wheelD * 3.14;
 };
-void Mathematics::setWheelTiks(uint8_t wT = 0)
+void Mathematics::setWheelTiks(int  wT = 0)
 {
     _wheelT = wT;
 };
 
-void Mathematics::putWSs(uint8_t wsX, uint8_t wsY, uint8_t wsZ)
+void Mathematics::putWSs(int  wsX, int  wsY, int  wsZ)
 {
     _ws_size[_X_] = wsX;
     _ws_size[_Y_] = wsY;
     _ws_size[_Z_] = wsZ;
 };
 
-void Mathematics::puCells(uint8_t cX, uint8_t cY, uint8_t cZ)
+void Mathematics::puCells(int  cX, int  cY, int  cZ)
 {
     _cell_size[_X_] = cX;
     _cell_size[_Y_] = cY;
@@ -30,7 +30,7 @@ void Mathematics::puCells(uint8_t cX, uint8_t cY, uint8_t cZ)
 
 }
 
-uint8_t Mathematics::getTicks(uint8_t chooseA, uint8_t nextCor, uint8_t lastCor)
+int  Mathematics::getTicks(int  chooseA, int  nextCor, int  lastCor)
 {   DeltaCor = lastCor - nextCor;
 
     switch(chooseA)

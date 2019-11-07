@@ -5,6 +5,7 @@
 #include <Axis.h>                                                   // БИБЛИОТЕКА ОСЕЙ 
 #include <Workspace.h>                                              // БИБЛИОТЕКА РАБОЧЕГО ПРОСТРАНСТВА
 #include <Mathematics.h>                                            // БИБЛИОТЕКА МАТЕМАТИКИ  
+#include <DynamixelSerial3.h>
 ////////////////// ПОДКЛЮЧЕНИЕ БИБЛИОТЕК ПАРАМЕТРОВ И ДАННЫХ ///////////
 #include "Pinout_config.h"                                          // ПАРАМЕТРЫ ПИНОВ
 #include "SConfig.h"                                                 // ОБЫЧНЫЕ ПАРАМЕТРЫ 
@@ -37,6 +38,10 @@
                                                                     //
 #define ON true                                                     //
 #define OFF false                                                   //
+                                                                    //
+#define MAX_ 0                                                      // ЯЧЕЙКА МАКСИМАЛЬНОГО ПОЛОЖЕНИЯ / ПОВОРОТА / СКОРОСТИ
+#define MID_ 1                                                      // ЯЧЕЙКА СРЕДНЕГО(ТЕКУЩЕГО) ПОЛОЖЕНИЯ / ПОВОРОТА  / СКОРОСТИ        
+#define MIN_ 2                                                      // ЯЧЕЙКА МИНИМАЛЬНОГО ПОЛОЖЕНИЯ / ПОВОРОТА  / СКОРОСТИ
 ////////////////// ОБЪЯВЛЕНИЕ РАБОЧИХ ОБЪЕКТОВ /////////////////////////
 Axis X1;                                                            //  ОБЪЕКТ ОСЬ X1
 Axis X2;                                                            //  OБЪЕКТ ОСЬ X2
@@ -91,16 +96,180 @@ void setup()                                                        //
     Math.putWSs(ws_Size[X_], ws_Size[Y_], ws_Size[Z_]);             // УСТАНОВКА  РАЗМЕРОВ РАБОЧЕГО ПРОСТРАНСТВА ДЛЯ МАТЕМАТИКИ (формат XYZ) 
     Math.puCells(cell_Size[X_], cell_Size[Y_], cell_Size[Z_]);      // УСТАНОВКА РАЗМЕРОВ ЯЧЕЙКА ДЛЯ МАТЕМАТИКИ (формат XYZ)
     ///////////////////////// ПОДГОТОВКА МОТОРОВ ///////////////////////
+    Dynamixel.begin(Conf.DXL_BAUDRATE, Conf.dir_pin, Conf.dir_pin);
+    motor_init();
+    motor_blink();
 
 }
 
-
+///////////////////////////////////     КОММУНИКАЦИИ ///////////////////////////////////////////////
 void com_init() // ФУНКЦИЯ ИНИЦИАЛИЗАЦИИ ПОСЛЕДОВАТЕЛЬНО ПОРТА
 {   
     COM.begin(Conf.COM_BAUDRATE);
     COM.println("Hello"); 
-};
+}
+///////////////////////////////////     МОТОРЫ       ///////////////////////////////////////////////
+void motor_init()
+{   int attemps = 0;
+    for (int i = 0; i < Conf.motor_count; i++)
+    {   
+        Dynamixel.ledStatus(Conf.id_ar[i - 1], OFF);
+        Dynamixel.ledStatus(Conf.id_ar[i], ON);
+        while (!Dynamixel.ping(Conf.id_ar) || attemps != 3)
+            attemps++;
+        delay(500);
+    }
+}
 
+void motor_blink()
+{
+    for (int i = 0; i < Conf.motor_count; i++)
+    {   
+        Dynamixel.ledStatus(Conf.id_ar[i - 1], OFF);
+        Dynamixel.ledStatus(Conf.id_ar[i], ON);
+        delay(500);
+    }
+}
+
+void move_X(int dirX, bool on1 = true, bool on2 = true) // ФУНКЦИЯ ПЕРЕМЕЩЕНИЯ ОСИ Х
+{
+    switch (dirX)
+    {
+    case move_up:
+        if (on1 == true)
+            Dynamixel.move(Conf.X1_id, Conf.id_speed_ar[X1_ar_cell]);
+        else 
+            Dynamixel.move(Conf.X1_id, (int32_t)0);
+
+        if (on2 == true)
+            Dynamixel.move(Conf.X2_id, -Conf.id_speed_ar[X2_ar_cell]);
+        else
+            Dynamixel.move(Conf.X2_id, (int32_t)0);
+
+        break;
+
+    case move_stop:
+        Dynamixel.move(Conf.X1_id, (int32_t)0);
+        Dynamixel.move(Conf.X2_id, (int32_t)0);
+        break;
+
+    case move_down:
+        if (on1 == true)
+            Dynamixel.move(Conf.X1_id, -Conf.id_speed_ar[X1_ar_cell]);
+        else 
+            Dynamixel.move(Conf.X1_id, (int32_t)0);
+
+        if (on2 == true)
+            Dynamixel.move(Conf.X2_id, Conf.id_speed_ar[X2_ar_cell]);
+        else
+            Dynamixel.move(Conf.X2_id, (int32_t)0);
+    }
+}
+
+void move_Y(int dirY = 0) // ФУНКЦИЯ ПЕРЕМЕЩЕНИЯ ОСИ Y
+{
+    switch(dirY)
+    {
+        case move_up:
+            Dynamixel.move(Conf.Y_id, Conf.id_speed_ar[Y_ar_cell]);
+            break;
+
+        case move_stop:
+            Dynamixel.move(Conf.Y_id,(int32_t)0);
+            break;
+
+        case move_down:
+            Dynamixel.move(Conf.Y_id, -Conf.id_speed_ar[Y_ar_cell]);
+    }
+}
+
+void move_Z(int dirZ, bool on1 = true, bool on2 = true, bool on3 = true, bool on4 = true) // ФУНКЦИЯ ПЕРЕМЕЩЕНИЯ ОСИ Y
+{
+    switch(dirZ)
+    {
+        case move_up:
+
+            if (on1 == true)
+                Dynamixel.move(Conf.Z1_id, Conf.id_speed_ar[Z1_ar_cell]);
+            else 
+                Dynamixel.move(Conf.Z1_id, (int32_t)0);
+ 
+            if (on2 == true)
+                Dynamixel.move(Conf.Z2_id, -Conf.id_speed_ar[Z2_ar_cell]);
+            else
+                Dynamixel.move(Conf.Z2_id, (int32_t)0);
+            
+            if (on3 == true)
+                Dynamixel.move(Conf.Z3_id, -Conf.id_speed_ar[Z3_ar_cell]);
+            else 
+                Dynamixel.move(Conf.Z3_id, (int32_t)0);
+
+            if (on4 == true)
+                Dynamixel.move(Conf.Z4_id, Conf.id_speed_ar[Z4_ar_cell]);
+            else 
+                Dynamixel.move(Conf.Z4_id, (int32_t)0);
+
+            break;
+
+        case move_stop:
+            Dynamixel.move(Conf.Z1_id, (int32_t)0);
+            Dynamixel.move(Conf.Z2_id, (int32_t)0);
+            Dynamixel.move(Conf.Z3_id, (int32_t)0);
+            Dynamixel.move(Conf.Z4_id, (int32_t)0);
+            break;
+        
+        case move_down:
+            if (on1 == true)
+                Dynamixel.move(Conf.Z1_id, -Conf.id_speed_ar[Z1_ar_cell]);
+            else 
+                 Dynamixel.move(Conf.Z1_id, (int32_t)0);
+
+            if (on2 == true)
+                Dynamixel.move(Conf.Z2_id, Conf.id_speed_ar[Z2_ar_cell]);
+            else 
+                Dynamixel.move(Conf.Z2_id, (int32_t)0);
+
+            if (on3 == true)
+                Dynamixel.move(Conf.Z3_id, Conf.id_speed_ar[Z3_ar_cell]);
+            else 
+                Dynamixel.move(Conf.Z3_id, (int32_t)0);
+
+            if (on4 == true)
+                Dynamixel.move(Conf.Z4_id, -Conf.id_speed_ar[Z4_ar_cell]);
+            else 
+                Dynamixel.move(Conf.Z4_id, (int32_t)0);
+            break;
+    }
+}
+
+void rotate_gripper(int deg)
+{   
+    deg =  constrain(deg, Conf.grip_rot[MAX_], Conf.grip_rot[MIN_]);
+    Dynamixel.moveSpeed(Conf.Gripper_rotate_id, deg, Conf.id_speed_ar[Grip_rot_ar_cell]);
+}
+
+void gripper(int pol)
+{
+    pol =  constrain(pol, Conf.grip_pol[MAX_], Conf.grip_pol[MIN_]);
+    Dynamixel.moveSpeed(Conf.Gripper_pol_id, pol, Conf.id_speed_ar[Grip_pol_ar_cell]);
+}
+
+void valve_st(bool st)
+{
+    switch (st){
+        case MAX_:
+
+            Dynamixel.moveSpeed(Conf.valve_id, Conf.valve_st[MAX_], Conf.id_speed_ar[valve_ar_cell]);
+            break;
+
+        case MIN_:
+
+            Dynamixel.moveSpeed(Conf.valve_id, Conf.valve_st[MAX_], Conf.id_speed_ar[valve_ar_cell]);        
+            break;
+    }
+}
+
+///////////////////////////////////     ОТЛАДЧИКИ       ///////////////////////////////////////////////
 void print_endstop_status(int chooseEnds = 3) // ФУНКЦИЯ ВЫВОДА СОСТОЯНИЙ КОНЦЕВИКОВ ( ЕСТЬ ВЫБОР ОСИ: ВСЕ;X;Y;Z)
 {  
      switch(chooseEnds)

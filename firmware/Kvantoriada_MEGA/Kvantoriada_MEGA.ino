@@ -99,7 +99,6 @@ void setup()                                                        //
     Dynamixel.begin(Conf.DXL_BAUDRATE, Conf.dir_pin, Conf.dir_pin);
     motor_init();
     motor_blink();
-
 }
 
 ///////////////////////////////////     КОММУНИКАЦИИ ///////////////////////////////////////////////

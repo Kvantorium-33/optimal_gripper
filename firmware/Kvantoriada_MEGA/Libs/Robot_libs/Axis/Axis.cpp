@@ -16,10 +16,17 @@ void Axis::Ainit(uint8_t _id_,uint8_t _endstop_pin_, uint8_t _encoder_pin_)
     _encoder_pin = _encoder_pin_;
     _endstop_pin = _endstop_pin_;
 
-    pinMode(_endstop_pin, INPUT_PULLUP);
-    pinMode(_encoder_pin, INPUT_PULLUP);
-
-    attachInterrupt(_encoder_pin, encoder_counter, RISING);
+    pinMode(_endstop_pin, INPUT);
+    
+    if (_id != 2)
+    {
+        attachInterrupt(digitalPinToInterrupt(_encoder_pin), encoder_counter, RISING);
+        pinMode(_encoder_pin, INPUT);
+    }
+    else
+    {
+        
+    }
     
 };
 

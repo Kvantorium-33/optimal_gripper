@@ -2,5 +2,6 @@
     "board": "arduino:avr:mega",
     "configuration": "cpu=atmega2560",
     "sketch": "Kvantoriada_MEGA.ino",
-    "port": "COM39"
+    "port": "COM39",
+    "programmer": "AVRISP mkII"
 }

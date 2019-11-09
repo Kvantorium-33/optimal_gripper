@@ -1,4 +1,6 @@
-
+#if ! ( defined __AVR_ATmega2560__ || defined __AVR_ATmega1280__ || defined __AVR_ATmega1281__ || defined __AVR_ATmega2561__ || defined __AVR_ATmega640__ )
+#error "This sketch only works on chips in the ATmega2560 family."
+#endif
 //#define COM Serial2                                                // BLUETOOTH
 #define COM Serial                                                   // USB
 ////////////////// ПОДКЛЮЧЕНИЕ РАБОЧИХ БИБЛИОТЕК ///////////////////////
@@ -38,6 +40,8 @@
                                                                     //
 #define ON true                                                     //
 #define OFF false                                                   //
+#define LEFT false
+#define RIGHT true
                                                                     //
 #define MAX_ 0                                                      // ЯЧЕЙКА МАКСИМАЛЬНОГО ПОЛОЖЕНИЯ / ПОВОРОТА / СКОРОСТИ
 #define MID_ 1                                                      // ЯЧЕЙКА СРЕДНЕГО(ТЕКУЩЕГО) ПОЛОЖЕНИЯ / ПОВОРОТА  / СКОРОСТИ        
@@ -114,7 +118,7 @@ void motor_init()
     {   
         Dynamixel.ledStatus(Conf.id_ar[i - 1], OFF);
         Dynamixel.ledStatus(Conf.id_ar[i], ON);
-        while (!Dynamixel.ping(Conf.id_ar) || attemps != 3)
+        while (!Dynamixel.ping(Conf.id_ar[i]) || attemps != 3)
             attemps++;
         delay(500);
     }
@@ -130,114 +134,136 @@ void motor_blink()
     }
 }
 
-void move_X(int dirX, bool on1 = true, bool on2 = true) // ФУНКЦИЯ ПЕРЕМЕЩЕНИЯ ОСИ Х
+void move_X (int dirX = move_stop, bool on1 = OFF, bool on2 = OFF)
 {
-    switch (dirX)
+    //true - RIGHT
+    // false - LEFT
+    switch(dirX)
     {
-    case move_up:
-        if (on1 == true)
-            Dynamixel.move(Conf.X1_id, Conf.id_speed_ar[X1_ar_cell]);
-        else 
-            Dynamixel.move(Conf.X1_id, (int32_t)0);
+        case move_up:
 
-        if (on2 == true)
-            Dynamixel.move(Conf.X2_id, -Conf.id_speed_ar[X2_ar_cell]);
-        else
-            Dynamixel.move(Conf.X2_id, (int32_t)0);
+            if (on1 == ON)
+                Dynamixel.turn(Conf.id_ar[X1_ar_cell], LEFT, Conf.id_speed_ar[X1_ar_cell]);
+            else
+                Dynamixel.turn(Conf.id_ar[X1_ar_cell], LEFT, 0);
+
+             if (on2 == ON)
+                Dynamixel.turn(Conf.id_ar[X2_ar_cell], RIGTH, Conf.id_speed_ar[X1_ar_cell]);
+            else
+                Dynamixel.turn(Conf.id_ar[X2_ar_cell], RIGHT, 0);
 
         break;
 
-    case move_stop:
-        Dynamixel.move(Conf.X1_id, (int32_t)0);
-        Dynamixel.move(Conf.X2_id, (int32_t)0);
+        case move_stop:
+
+             Dynamixel.turn(Conf.id_ar[X2_ar_cell], RIGHT, 0);
+             Dynamixel.turn(Conf.id_ar[X1_ar_cell], LEFT, 0);
+
         break;
 
-    case move_down:
-        if (on1 == true)
-            Dynamixel.move(Conf.X1_id, -Conf.id_speed_ar[X1_ar_cell]);
-        else 
-            Dynamixel.move(Conf.X1_id, (int32_t)0);
+        case move_down:
 
-        if (on2 == true)
-            Dynamixel.move(Conf.X2_id, Conf.id_speed_ar[X2_ar_cell]);
-        else
-            Dynamixel.move(Conf.X2_id, (int32_t)0);
+            if (on1 == ON)
+                Dynamixel.turn(Conf.id_ar[X1_ar_cell], RIGHT, Conf.id_speed_ar[X1_ar_cell]);
+            else
+                Dynamixel.turn(Conf.id_ar[X1_ar_cell], RIGHT, 0);
+
+             if (on2 == ON)
+                Dynamixel.turn(Conf.id_ar[X2_ar_cell], LEFT, Conf.id_speed_ar[X1_ar_cell]);
+            else
+                Dynamixel.turn(Conf.id_ar[X2_ar_cell], LEFT, 0);
+        break;
     }
+    
 }
 
-void move_Y(int dirY = 0) // ФУНКЦИЯ ПЕРЕМЕЩЕНИЯ ОСИ Y
-{
+void move_Y(int dirY = move_stop)
+{   //true - RIGHT
+    // false - LEFT
     switch(dirY)
     {
         case move_up:
-            Dynamixel.move(Conf.Y_id, Conf.id_speed_ar[Y_ar_cell]);
-            break;
+
+            Dynamixel.turn(Conf.id_ar[Y_ar_cell], RIGHT, Conf.id_speed_ar[Y_ar_cell]);
+
+        break;
 
         case move_stop:
-            Dynamixel.move(Conf.Y_id,(int32_t)0);
-            break;
+
+             Dynamixel.turn(Conf.id_ar[Y_ar_cell], RIGHT, 0);
+
+        break;
 
         case move_down:
-            Dynamixel.move(Conf.Y_id, -Conf.id_speed_ar[Y_ar_cell]);
+
+             Dynamixel.turn(Conf.id_ar[Y_ar_cell], LEFT, Conf.id_speed_ar[Y_ar_cell]);
+
+        break;
     }
 }
 
-void move_Z(int dirZ, bool on1 = true, bool on2 = true, bool on3 = true, bool on4 = true) // ФУНКЦИЯ ПЕРЕМЕЩЕНИЯ ОСИ Y
+void move_Z(int dirZ = move_stop, bool on1 = OFF, bool on2 = OFF, bool on3 = OFF, bool on4 = OFF)
 {
+    //true - RIGHT
+    // false - LEFT
     switch(dirZ)
     {
         case move_up:
 
-            if (on1 == true)
-                Dynamixel.move(Conf.Z1_id, Conf.id_speed_ar[Z1_ar_cell]);
-            else 
-                Dynamixel.move(Conf.Z1_id, (int32_t)0);
- 
-            if (on2 == true)
-                Dynamixel.move(Conf.Z2_id, -Conf.id_speed_ar[Z2_ar_cell]);
+            if(on1 == ON)
+                Dynamixel.turn(Conf.id_ar[Z1_ar_cell], RIGHT, Conf.id_speed_ar[Z1_ar_cell]);
             else
-                Dynamixel.move(Conf.Z2_id, (int32_t)0);
-            
-            if (on3 == true)
-                Dynamixel.move(Conf.Z3_id, -Conf.id_speed_ar[Z3_ar_cell]);
-            else 
-                Dynamixel.move(Conf.Z3_id, (int32_t)0);
+                Dynamixel.turn(Conf.id_ar[Z1_ar_cell], RIGHT, 0);
 
-            if (on4 == true)
-                Dynamixel.move(Conf.Z4_id, Conf.id_speed_ar[Z4_ar_cell]);
-            else 
-                Dynamixel.move(Conf.Z4_id, (int32_t)0);
+            if(on2 == ON)
+                Dynamixel.turn(Conf.id_ar[Z2_ar_cell], LEFT, Conf.id_speed_ar[Z2_ar_cell]);
+            else
+                Dynamixel.turn(Conf.id_ar[Z2_ar_cell], LEFT, 0);
 
-            break;
+            if(on3 == ON)
+                Dynamixel.turn(Conf.id_ar[Z3_ar_cell], RIGHT, Conf.id_speed_ar[Z3_ar_cell]);
+            else
+                Dynamixel.turn(Conf.id_ar[Z3_ar_cell], RIGHT, 0);
+
+            if(on4 == ON)
+                Dynamixel.turn(Conf.id_ar[Z4_ar_cell], LEFT, Conf.id_speed_ar[Z4_ar_cell]);
+            else
+                Dynamixel.turn(Conf.id_ar[Z4_ar_cell], LEFT, 0);
+
+        break;
 
         case move_stop:
-            Dynamixel.move(Conf.Z1_id, (int32_t)0);
-            Dynamixel.move(Conf.Z2_id, (int32_t)0);
-            Dynamixel.move(Conf.Z3_id, (int32_t)0);
-            Dynamixel.move(Conf.Z4_id, (int32_t)0);
-            break;
-        
+
+            Dynamixel.turn(Conf.id_ar[Z1_ar_cell], RIGHT, 0);
+            Dynamixel.turn(Conf.id_ar[Z2_ar_cell], LEFT, 0);
+            Dynamixel.turn(Conf.id_ar[Z3_ar_cell], RIGHT, 0);
+            Dynamixel.turn(Conf.id_ar[Z4_ar_cell], LEFT, 0);
+
+        break;
+
         case move_down:
-            if (on1 == true)
-                Dynamixel.move(Conf.Z1_id, -Conf.id_speed_ar[Z1_ar_cell]);
-            else 
-                 Dynamixel.move(Conf.Z1_id, (int32_t)0);
 
-            if (on2 == true)
-                Dynamixel.move(Conf.Z2_id, Conf.id_speed_ar[Z2_ar_cell]);
-            else 
-                Dynamixel.move(Conf.Z2_id, (int32_t)0);
+            if(on1 == ON)
+                Dynamixel.turn(Conf.id_ar[Z1_ar_cell], LEFT, Conf.id_speed_ar[Z1_ar_cell]);
+            else
+                Dynamixel.turn(Conf.id_ar[Z1_ar_cell], LEFT, 0);
 
-            if (on3 == true)
-                Dynamixel.move(Conf.Z3_id, Conf.id_speed_ar[Z3_ar_cell]);
-            else 
-                Dynamixel.move(Conf.Z3_id, (int32_t)0);
+            if(on2 == ON)
+                Dynamixel.turn(Conf.id_ar[Z2_ar_cell], RIGHT, Conf.id_speed_ar[Z2_ar_cell]);
+            else
+                Dynamixel.turn(Conf.id_ar[Z2_ar_cell], RIGHT, 0);
 
-            if (on4 == true)
-                Dynamixel.move(Conf.Z4_id, -Conf.id_speed_ar[Z4_ar_cell]);
-            else 
-                Dynamixel.move(Conf.Z4_id, (int32_t)0);
-            break;
+            if(on3 == ON)
+                Dynamixel.turn(Conf.id_ar[Z3_ar_cell], LEFT, Conf.id_speed_ar[Z3_ar_cell]);
+            else
+                Dynamixel.turn(Conf.id_ar[Z3_ar_cell], LEFT, 0);
+
+            if(on4 == ON)
+                Dynamixel.turn(Conf.id_ar[Z4_ar_cell], RIGHT, Conf.id_speed_ar[Z4_ar_cell]);
+            else
+                Dynamixel.turn(Conf.id_ar[Z4_ar_cell], RIGHT, 0);
+
+        break;
     }
 }
 

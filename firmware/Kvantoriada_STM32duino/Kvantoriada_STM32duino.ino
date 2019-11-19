@@ -1,7 +1,8 @@
-#include <DynamixelSerial3.h>
+#include <DynamixelSerial3.h> // БИБЛИОТЕКА ДЛЯ УПРАВЛЕНИЯ ДИНАМИКСЕЛЯМИ
+#include <ros_lib_stm32/ros.h>
 // ВЫБОР ПОСЛЕДОВАТЕЛЬНО ПОРТА ДЛЯ ОТЛАДКИ
 #define COM Serial
-//#define COM Serial2
+//#define COM Serial1
 
 // ПАРАМЕТРЫ РАБОЧЕГО ПРОСТРАНСТВА
 #define WS_X_size 740
@@ -62,7 +63,8 @@ const int ws_Size[3] = {WS_X_size, WS_Y_size, WS_Z_size};
 
 #define com_dir_pin 23 // ПИН УПРАВЛЕНИЯ МИКРОСХЕМОЙ
 
-int dyn_id_ar[Dynamixel_count] = { // МАССИВ ID СЕРВОМОТОРОВ
+int dyn_id_ar[Dynamixel_count] = // МАССИВ ID СЕРВОМОТОРОВ
+{ 
   Z1_dyn_id,
   Z2_dyn_id,
   Z3_dyn_id,
@@ -89,7 +91,8 @@ int dyn_id_ar[Dynamixel_count] = { // МАССИВ ID СЕРВОМОТОРОВ
 #define Y_encoder_pin   PB15 // ПИН ЭНКОДЕРА ОСИ Y
 
 
-const int encoder_pins_array[7] = {  // МАССИВ ПИНОВ ЭНКОДЕРОВ ОСЕЙ
+const int encoder_pins_array[7] = // МАССИВ ПИНОВ ЭНКОДЕРОВ ОСЕЙ
+{  
   Z1_encoder_pin,
   Z2_encoder_pin,
   Z3_encoder_pin,
@@ -123,7 +126,8 @@ int Y_enc_value = 0;
 
 bool endstop_read[endstop_count] = {false, false, false, false, false, false, false}; // МАССИВ СОСТОЯНИЙ КОНЦЕВИКОВ
 
-const int endstops_pins_array[endstop_count] =  { //МАССИВ ПИНОВ КОНЦЕВИКОВ
+const int endstops_pins_array[endstop_count] =  //МАССИВ ПИНОВ КОНЦЕВИКОВ
+{ 
   Z1_endstop_pin,
   Z2_endstop_pin,
   Z3_endstop_pin,
@@ -133,6 +137,32 @@ const int endstops_pins_array[endstop_count] =  { //МАССИВ ПИНОВ КО
   Y_endstop_pin
 };
 
+#define KpX 0 // ПРОПОРЦИОНАЛЬНЫЙ КОЭФФИЦЕНТ РЕГУЛЯТОРА ОСИ Х
+#define KpZ 0 // ПРОПОРЦИОНАЛЬНЫЙ КОЭФФИЦЕНТ РЕГУЛЯТОРА ОСИ Y
+
+#define move_up 1     // ДВИЖЕНИЕ ОСИ ПО УВЕЛЕЧЕНИЮ КООРДИНАТ
+#define move_stop 0   // НЕДВИЖЕНИЕ ОСИ
+#define move_down -1  // ДВИЖЕНИЕ ОСИ ПО УМЕНЬШЕНИЮ КООРДИНАТ
+
+int Z1_speed = 1020; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Z1
+int Z2_speed = 1020; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Z2
+int Z3_speed = 1020; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Z3
+int Z4_speed = 1020; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Z4
+
+int X1_speed = 1020; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ X1
+int X2_speed = 1020; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ X2
+
+int Y_speed = 1020;  // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Y
+
+int valve_speed = 1020;  // СКОРОСТЬ ДИНАМИКСЕЛЯ КЛАПАНА
+int rot_grip_speed = 1020; // СКОРОСТЬ ДИНАМИКСЕЛЯ ПОВОРОТА ЗАХВАТА
+int grip_pos_speed = 1020; // СКОРОСТЬ ДИНАМИКСЕЛЯ ЗАХВАТА
+
+int speed_ar[Dynamixel_count] = {Z1_speed, Z2_speed, Z3_speed, Z4_speed, X1_speed, X2_speed, Y_speed, valve_speed, rot_grip_speed, grip_pos_speed};
+
+#define LEFT false
+#define RIGHT true
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 void setup()
@@ -140,9 +170,9 @@ void setup()
   com_init(); // ИНИЦИАЛИЗЯЦИЯ ПОСЛЕДОВАТЕЛЬНОГО ПОРТА
   pins_init();// ИНИЦИАЛИЗЯЦИЯ ПИНОВ
   encoders_init(); // ИНИЦИАЛИЗАЦИЯ ЭНКОДЕРОВ
-  Dynamixel_init();
+  Dynamixel_init(); // ИНИЦИАЛИЗЯЦИЯ СИСТЕМЫ ДЛЯ ДИНАМИКСЕЛЕЙ
 }
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void pins_init() // ФУНКЦИЯ ИНИЦИАЛИЗАЦИИ ПИНОВ
 {
   for (int i = 0; i < endstop_count; i++)
@@ -160,6 +190,7 @@ void pins_init() // ФУНКЦИЯ ИНИЦИАЛИЗАЦИИ ПИНОВ
 void com_init() // ФУНКЦИЯ ИНИЦИАЛИЗАЦИИ ПОСЛЕДОВАТЕЛЬНОГО ПОРТА
 {
   COM.begin(115200);
+  while (!Serial);
   COM.println("Ready");
 }
 
@@ -212,28 +243,73 @@ void print_encoders() // ФУНКЦИЯ ВЫВОДА СЧЕТЧИКОВ ЭНКО
 }
 void Dynamixel_init() // ФУНКЦИЯ ИНИЦИАЛИЗАЦИИ СЕРВОМОТОРОВ
 {
-  Dynamixel.begin(1000000, com_dir_pin); // начинаем связь с динамикселями на скорости 1 Mbps
+  Dynamixel.begin(1000000, com_dir_pin, com_dir_pin); // начинаем связь с динамикселями на скорости 1 Mbps
   for (int i = 0; i < Dynamixel_count; i++) // пробегаемся по массиву айдишников динамикселей
   { 
     if (Dynamixel.ping(dyn_id_ar[i])) // стучимся к динамикселю с id из массива
     { // если достучались то пишем об успехе
       COM.print("successfully connect to id: ");
-      COM.println(i);
-     
+      COM.println(i + 1);
     }
     else
     { // иначе пишем об ошибке
       COM.print("FAILED connect to id: ");
-      COM.println(i);
+      COM.println(i + 1);
+      while(1) //полностью тормозим программу 
+      {
+        COM.println(" NOT ALL DYNAMIXELS ARE CONNECTED AND INITED!!!!!! PLEASE CHECK ALL!!!");
+      }
     }
-    delay(1000);
+    delay(500);
   }
 }
-/////////////////////////////////////////////////////////////////////////////////////
+
+void move_X(int mode = 0, bool on1 =  false, bool on2 = false) // ФУНКЦИЯ ПЕРЕМЕЩЕНИЯ ОСИ X
+{
+  int dX = X1_enc_value - X2_enc_value; // НАХОДИМ РАЗНОСТЬ ЭНКОДЕРОВ КАРЕТОК Х1 И Х2
+  int dx_speed =  dX * KpX; // УМНОЖАЕМ НА ПРОПОРЦИОНАЛЬНЫЙ КОЭФФИЦЕНТ ОСИ Х
+  int X1_sp = abs(speed_ar[X1_arcell] - dx_speed); // ВЫЧИТАЕМ ИЗ УСТАНВЛОЕННОЙ СКОРОСТИ ДЛЯ КАРЕТКИ Х1 И ДЕЛАЕМ АБСОЛЮТНЫМ (ПО МОДУЛЮ)
+  int X2_sp = abs(speed_ar[X2_arcell] + dx_speed); // ВЫЧИТАЕМ ИЗ УСТАНВЛОЕННОЙ СКОРОСТИ ДЛЯ КАРЕТКИ Х2 И ДЕЛАЕМ АБСОЛЮТНЫМ (ПО МОДУЛЮ)
+  X1_sp = constrain(X1_sp, 0, 1020);  // ОГРАНИЧИВАЕМ НУЖНУЮ СКОРСТЬ В ПРЕДЕЛАХ МИНИМАЛЬНОЙ И МАКСИМАЛЬНОЙ ДЛЯ КАРЕТКИ Х1
+  X2_sp = constrain(X2_sp, 0, 1020);  // ОГРАНИЧИВАЕМ НУЖНУЮ СКОРСТЬ В ПРЕДЕЛАХ МИНИМАЛЬНОЙ И МАКСИМАЛЬНОЙ ДЛЯ КАРЕТКИ Х2
+
+    switch (mode) // СМОТРИМ КАКОЙ РЕЖИМ У НАС ПРОСЯТ
+    { 
+      case move_up: // ЕДЕМ ВПЕРЕД (В СТОРОНУ УВЕЛЕЧЕНИЯ КООРДИНАТЫ)
+        if (on1 == true) // ЕСЛИ ЕСТЬ РАЗРЕШЕНИЕ ДВИГАТЬСЯ ТО ДВИГАЕМСЯ
+          Dynamixel.turn(dyn_id_ar[X1_arcell], LEFT, X1_sp);
+        else // ИНАЧЕ НЕ  ДВИГАЕМСЯ
+          Dynamixel.turn(dyn_id_ar[X1_arcell], LEFT, 0);
+
+        if (on2 == true) // ЕСЛИ ЕСТЬ РАЗРЕШЕНИЕ ДВИГАТЬСЯ ТО ДВИГАЕМСЯ
+          Dynamixel.turn(dyn_id_ar[X2_arcell], RIGHT, X2_sp);
+        else // ИНАЧЕ НЕ ДВИГАЕМСЯ
+          Dynamixel.turn(dyn_id_ar[X2_arcell], RIGHT, 0);
+      break;
+      case move_stop: //ПОЛНЫЙ СТОП!!!!
+        Dynamixel.turn(dyn_id_ar[X1_arcell], LEFT, 0);
+        Dynamixel.turn(dyn_id_ar[X2_arcell], RIGHT, 0);
+      break;
+      case move_down: // ЕДЕМ НАЗАД (В СТОРОНУ УМЕНЬШЕНИЯ КООРДИНАТЫ)
+        if (on1 == true) // ЕСЛИ ЕСТЬ РАЗРЕШЕНИЕ ДВИГАТЬСЯ ТО ДВИГАЕМСЯ
+          Dynamixel.turn(dyn_id_ar[X1_arcell], RIGTH, X1_sp);
+        else// ИНАЧЕ НЕ  ДВИГАЕМСЯ
+          Dynamixel.turn(dyn_id_ar[X1_arcell], LEFT, 0);
+
+        if (on2 == true) // ЕСЛИ ЕСТЬ РАЗРЕШЕНИЕ ДВИГАТЬСЯ ТО ДВИГАЕМСЯ
+          Dynamixel.turn(dyn_id_ar[X2_arcell], LEFT, X2_sp);
+        else // ИНАЧЕ НЕ ДВИГАЕМСЯ
+          Dynamixel.turn(dyn_id_ar[X2_arcell], RIGHT, 0);
+      break;
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void loop()
 {
+  
 }
-/////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void Z1_counter() // СЧЕТЧИК ОСИ Z1
 {
   Z1_enc_value++;

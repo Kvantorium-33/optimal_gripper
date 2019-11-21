@@ -1,8 +1,10 @@
+#include <ros.h> //  БИБЛИОТЕКА ПОДКЛЮЧЕНИЯ К ВЫСШЕЙ СИЛЕ
 #include <DynamixelSerial3.h> // БИБЛИОТЕКА ДЛЯ УПРАВЛЕНИЯ ДИНАМИКСЕЛЯМИ
-#include <ros_lib_stm32/ros.h>
+#define DXL_baud 1000000
 // ВЫБОР ПОСЛЕДОВАТЕЛЬНО ПОРТА ДЛЯ ОТЛАДКИ
 #define COM Serial
 //#define COM Serial1
+#define COM_baud 115200
 
 // ПАРАМЕТРЫ РАБОЧЕГО ПРОСТРАНСТВА
 #define WS_X_size 740
@@ -189,8 +191,8 @@ void pins_init() // ФУНКЦИЯ ИНИЦИАЛИЗАЦИИ ПИНОВ
 
 void com_init() // ФУНКЦИЯ ИНИЦИАЛИЗАЦИИ ПОСЛЕДОВАТЕЛЬНОГО ПОРТА
 {
-  COM.begin(115200);
-  while (!Serial);
+  COM.begin(COM_baud);
+  while (!COM);
   COM.println("Ready");
 }
 
@@ -243,10 +245,10 @@ void print_encoders() // ФУНКЦИЯ ВЫВОДА СЧЕТЧИКОВ ЭНКО
 }
 void Dynamixel_init() // ФУНКЦИЯ ИНИЦИАЛИЗАЦИИ СЕРВОМОТОРОВ
 {
-  Dynamixel.begin(1000000, com_dir_pin, com_dir_pin); // начинаем связь с динамикселями на скорости 1 Mbps
+  Dynamixel.begin(DXL_baud, com_dir_pin, com_dir_pin); // начинаем связь с динамикселями на скорости 1 Mbps
   for (int i = 0; i < Dynamixel_count; i++) // пробегаемся по массиву айдишников динамикселей
   { 
-    if (Dynamixel.ping(dyn_id_ar[i])) // стучимся к динамикселю с id из массива
+    if (Dynamixel.ping(dyn_id_ar[i]) == 1) // стучимся к динамикселю с id из массива
     { // если достучались то пишем об успехе
       COM.print("successfully connect to id: ");
       COM.println(i + 1);
@@ -303,7 +305,6 @@ void move_X(int mode = 0, bool on1 =  false, bool on2 = false) // ФУНКЦИЯ
       break;
     }
 }
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void loop()
 {

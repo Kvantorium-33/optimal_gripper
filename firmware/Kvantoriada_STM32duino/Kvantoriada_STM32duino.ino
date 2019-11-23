@@ -150,10 +150,10 @@ const int endstops_pins_array[endstop_count] =  //МАССИВ ПИНОВ КОН
 #define move_stop 0   // НЕДВИЖЕНИЕ ОСИ
 #define move_down -1  // ДВИЖЕНИЕ ОСИ ПО УМЕНЬШЕНИЮ КООРДИНАТ
 
-int Z1_speed = 1020; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Z1
-int Z2_speed = 1020; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Z2
-int Z3_speed = 1020; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Z3
-int Z4_speed = 1020; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Z4
+int Z1_speed = 700; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Z1
+int Z2_speed = 700; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Z2
+int Z3_speed = 700; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Z3
+int Z4_speed = 700; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Z4
 
 int X1_speed = 1020; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ X1
 int X2_speed = 1020; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ X2
@@ -250,25 +250,27 @@ void print_encoders() // ФУНКЦИЯ ВЫВОДА СЧЕТЧИКОВ ЭНКО
 
 void Dynamixel_init() // ФУНКЦИЯ ИНИЦИАЛИЗАЦИИ СЕРВОМОТОРОВ
 {
-  Dynamixel.begin(DXL_baud, com_dir_pin, com_dir_pin); // начинаем связь с динамикселями на скорости 1 Mbps
-  for (int i = 0; i < Dynamixel_count; i++) // пробегаемся по массиву айдишников динамикселей
-  { 
-    if (Dynamixel.ping(dyn_id_ar[i]) == 1) // стучимся к динамикселю с id из массива
-    { // если достучались то пишем об успехе
-      COM.print("Successfully connect to id: ");
-      COM.println(i + 1);
-    }
-    else
-    { // иначе пишем об ошибке
-      COM.print("FAILED connect to id: ");
-      COM.println(i + 1);
-      while(1) //полностью тормозим программу 
-      {
-        COM.println(" NOT ALL DYNAMIXELS ARE CONNECTED AND INITED!!!!!! PLEASE CHECK ALL!!!");
-      }
-    }
-    delay(500);
-  }
+  Dynamixel.begin(DXL_baud, com_dir_pin); // начинаем связь с динамикселями на скорости 1 Mbps
+  
+  Dynamixel.setEndless(dyn_id_ar[Z1_arcell],ON);
+  Dynamixel.setEndless(dyn_id_ar[Z2_arcell],ON);
+  Dynamixel.setEndless(dyn_id_ar[Z3_arcell],ON);
+  Dynamixel.setEndless(dyn_id_ar[Z4_arcell],ON);
+
+  Dynamixel.setEndless(dyn_id_ar[X1_arcell],ON);
+  Dynamixel.setEndless(dyn_id_ar[X2_arcell],ON);
+
+  Dynamixel.setEndless(dyn_id_ar[Y_arcell],ON);
+
+  Dynamixel.turn(dyn_id_ar[Z1_arcell], RIGHT, 0);
+  Dynamixel.turn(dyn_id_ar[Z2_arcell], RIGHT, 0);
+  Dynamixel.turn(dyn_id_ar[Z3_arcell], RIGHT, 0);
+  Dynamixel.turn(dyn_id_ar[Z4_arcell], RIGHT, 0);
+
+  Dynamixel.turn(dyn_id_ar[X1_arcell], RIGHT, 0);
+  Dynamixel.turn(dyn_id_ar[X2_arcell], RIGHT, 0);
+
+  Dynamixel.turn(dyn_id_ar[Y_arcell], RIGHT, 0);
 }
 
 void move_X(int mode = 0, bool on1 = false, bool on2 = false) // ФУНКЦИЯ ПЕРЕМЕЩЕНИЯ ОСИ X
@@ -299,14 +301,14 @@ void move_X(int mode = 0, bool on1 = false, bool on2 = false) // ФУНКЦИЯ 
       break;
       case move_down: // ЕДЕМ НАЗАД (В СТОРОНУ УМЕНЬШЕНИЯ КООРДИНАТЫ)
         if (on1 == true) // ЕСЛИ ЕСТЬ РАЗРЕШЕНИЕ ДВИГАТЬСЯ ТО ДВИГАЕМСЯ
-          Dynamixel.turn(dyn_id_ar[X1_arcell], RIGTH, X1_sp);
+          Dynamixel.turn(dyn_id_ar[X1_arcell], RIGHT,X1_sp);
         else// ИНАЧЕ НЕ  ДВИГАЕМСЯ
-          Dynamixel.turn(dyn_id_ar[X1_arcell], LEFT, 0);
+          Dynamixel.turn(dyn_id_ar[X1_arcell], RIGHT, 0);
 
         if (on2 == true) // ЕСЛИ ЕСТЬ РАЗРЕШЕНИЕ ДВИГАТЬСЯ ТО ДВИГАЕМСЯ
           Dynamixel.turn(dyn_id_ar[X2_arcell], LEFT, X2_sp);
         else // ИНАЧЕ НЕ ДВИГАЕМСЯ
-          Dynamixel.turn(dyn_id_ar[X2_arcell], RIGHT, 0);
+          Dynamixel.turn(dyn_id_ar[X2_arcell], LEFT, 0);
       break;
     }
 }
@@ -341,14 +343,14 @@ void move_Z(int mode = 0, bool on1 = false, bool on2 = false, int on3 = false, i
         Dynamixel.turn(dyn_id_ar[Z2_arcell], LEFT, 0);
 
       if (on3 == true) // ЕСЛИ ЕСТЬ РАЗРЕШЕНИЕ ДВИГАТЬСЯ ТО ДВИГАЕМСЯ
-        Dynamixel.turn(dyn_id_ar[Z3_arcell], RIGHT, Z3_sp);
+        Dynamixel.turn(dyn_id_ar[Z3_arcell], LEFT, Z3_sp);
       else // ИНАЧЕ НЕ ДВИГАЕМСЯ
         Dynamixel.turn(dyn_id_ar[Z3_arcell], RIGHT, 0);
       
       if (on4 == true) // ЕСЛИ ЕСТЬ РАЗРЕШЕНИЕ ДВИГАТЬСЯ ТО ДВИГАЕМСЯ
-        Dynamixel.turn(dyn_id_ar[Z4_arcell], LEFT, Z4_sp);
+        Dynamixel.turn(dyn_id_ar[Z4_arcell], RIGHT, Z4_sp);
       else // ИНАЧЕ НЕ ДВИГАЕМСЯ
-        Dynamixel.turn(dyn_id_ar[Z4_arcell], LEFT, 0);
+        Dynamixel.turn(dyn_id_ar[Z4_arcell], RIGHT, 0);
     break;
     case move_stop: //ПОЛНЫЙ СТОП!!!!
       Dynamixel.turn(dyn_id_ar[Z1_arcell], RIGHT, 0);
@@ -364,14 +366,14 @@ void move_Z(int mode = 0, bool on1 = false, bool on2 = false, int on3 = false, i
         Dynamixel.turn(dyn_id_ar[Z1_arcell], LEFT, 0);
       
       if (on2 == true) // ЕСЛИ ЕСТЬ РАЗРЕШЕНИЕ ДВИГАТЬСЯ ТО ДВИГАЕМСЯ
-        Dynamixel.turn(dyn_id_ar[Z2_arcell], LEFT, Z2_sp);
+        Dynamixel.turn(dyn_id_ar[Z2_arcell], RIGHT, Z2_sp);
       else // ИНАЧЕ НЕ ДВИГАЕМСЯ
-        Dynamixel.turn(dyn_id_ar[Z2_arcell], LEFT, 0);
+        Dynamixel.turn(dyn_id_ar[Z2_arcell], RIGHT, 0);
 
       if (on3 == true) // ЕСЛИ ЕСТЬ РАЗРЕШЕНИЕ ДВИГАТЬСЯ ТО ДВИГАЕМСЯ
-        Dynamixel.turn(dyn_id_ar[Z3_arcell], LEFT, Z3_sp);
+        Dynamixel.turn(dyn_id_ar[Z3_arcell], RIGHT, Z3_sp);
       else // ИНАЧЕ НЕ ДВИГАЕМСЯ
-        Dynamixel.turn(dyn_id_ar[Z3_arcell], LEFT, 0);
+        Dynamixel.turn(dyn_id_ar[Z3_arcell], RIGHT, 0);
 
       if (on4 == true) // ЕСЛИ ЕСТЬ РАЗРЕШЕНИЕ ДВИГАТЬСЯ ТО ДВИГАЕМСЯ
         Dynamixel.turn(dyn_id_ar[Z4_arcell], LEFT, Z4_sp);
@@ -426,6 +428,29 @@ bool go_home()
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void loop()
 {
+  if(COM.available())
+  {
+    char data = (char)Serial.read();
+
+    if (data == '1')
+    {
+    
+      move_X(move_up, 1, 1);
+      move_Y(move_up);
+    }
+    if (data == '0')
+    {
+      move_X(move_stop);
+      move_Y(move_stop);
+    }
+    if (data == '2')
+    {
+      move_X(move_down, 1, 1);
+      move_Y(move_down);
+    }
+   
+   
+  }
   
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

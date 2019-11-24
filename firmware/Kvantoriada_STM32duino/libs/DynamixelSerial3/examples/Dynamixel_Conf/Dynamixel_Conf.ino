@@ -1,4 +1,4 @@
-#include <DynamixelSerial.h>
+#include <DynamixelSerial3.h>
 
 void setup(){
 Dynamixel.begin(1000000,2);  // Inicialize the servo at 1Mbps and Pin Control 2
@@ -15,9 +15,9 @@ void loop(){
   Dynamixel.setVoltageLimit(1,65,160);  // Set Operating Voltage from 6.5v to 16v
   Dynamixel.setMaxTorque(1,512);        // 50% of Torque
   Dynamixel.setSRL(1,2);                // Set the SRL to Return All
-  
-  Dynamixel.ledStatus(1,ON);           // Turn ON the LED
 
+  Dynamixel.ledStatus(1,ON);           // Turn ON the LED
+  
   delay(1000);
   
 }

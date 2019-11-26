@@ -17,6 +17,7 @@
 
 #define Wheel_deametr 55 // ДИАМЕТР КОЛЕСА ЭНКОДЕРА
 #define Wheel_ticks 65 // КОЛИЧЕСТВО ТИКОВ КОЛЕСА ЭНКОДЕРА НА ОБОРОТ
+#define Wheel_long Wheel_deametr * PI
 
 const int cell_Size[3] = {CELL_X_size, CELL_Y_size, CELL_Z_size}; // МАССИВ РАЗМЕРОВ ЯЧЕКИ (ФОРМАТ: XYZ)
 const int ws_Size[3] = {WS_X_size, WS_Y_size, WS_Z_size};         // МАССИВ РАЗМЕРОВ РАБОЧЕГО ПРОСТРАНСТВА (ФОРМАТ: XYZ)
@@ -332,7 +333,7 @@ void move_X(int mode = 0, bool on1 = false, bool on2 = false) // ФУНКЦИЯ 
     }
 }
 
-void move_Z(int mode = 0, bool on1 = false, bool on2 = false, int on3 = false, int on4 = false) // ФУНКЦИЯ ПЕРЕМЕЩЕНИЯ ОСИ Z
+void move_Z(int mode = 0, bool on1 = false, bool on2 = false, bool on3 = false, bool on4 = false) // ФУНКЦИЯ ПЕРЕМЕЩЕНИЯ ОСИ Z
 { 
   int dZ12 = Z1_enc_value - Z2_enc_value; // НАХОДИМ РАЗНОСТЬ 1-ОЙ И 2-ОЙ КАРЕТОК
   int dZ34 = Z3_enc_value - Z4_enc_value; // НАХОДИМ РАЗНОСТЬ 3-ОЙ И 4-ОЙ КАРЕТОК
@@ -350,6 +351,7 @@ void move_Z(int mode = 0, bool on1 = false, bool on2 = false, int on3 = false, i
 
   switch(mode) // СМОТРИМ КАКОЙ РЕЖИМ У НАС ПРОСЯТ
   {
+
     case move_up: // ЕДЕМ ВПЕРЕД (В СТОРОНУ УВЕЛЕЧЕНИЯ КООРДИНАТЫ)
       if (on1 == true) // ЕСЛИ ЕСТЬ РАЗРЕШЕНИЕ ДВИГАТЬСЯ ТО ДВИГАЕМСЯ  
         Dynamixel.turn(dyn_id_ar[Z1_arcell], RIGHT, Z1_sp);
@@ -370,6 +372,7 @@ void move_Z(int mode = 0, bool on1 = false, bool on2 = false, int on3 = false, i
         Dynamixel.turn(dyn_id_ar[Z4_arcell], RIGHT, Z4_sp);
       else // ИНАЧЕ НЕ ДВИГАЕМСЯ
         Dynamixel.turn(dyn_id_ar[Z4_arcell], RIGHT, 0);
+
     break;
     case move_stop: //ПОЛНЫЙ СТОП!!!!
       Dynamixel.turn(dyn_id_ar[Z1_arcell], RIGHT, 0);
@@ -422,28 +425,28 @@ void go_home()
 { 
   while(endstop_read[Y_arcell] != true) // СДВИГАЕМ ОСЬ Y ПОКА КОНЦЕВИК НЕ БУДЕТ НАЖАТ
   { 
-    if((char) Serial.read() != '1')break;
+    //if((char) Serial.read() != '2')break;
     read_endstops(); // ЧИТАЕМ КОНЦЕВИКИ
     move_Y(move_down); // СДВИГАЕМ ОСЬ Y
   }
   move_Y(move_stop); // ОСТАНАВЛИВАЕМ ОСЬ Y
   
-  while((char) Serial.read() != '1');
+  //while((char) Serial.read() != '1');
   
-  while (endstop_read[X1_arcell] != true and endstop_read[X2_arcell] != true) // СДВИГАЕМ ОСЬ Х ПОКА ВСЕ КОНЦЕВИКИ НЕ БУДУТ НАЖАТЫ
+  while (endstop_read[X1_arcell] != true && endstop_read[X2_arcell] != true) // СДВИГАЕМ ОСЬ Х ПОКА ВСЕ КОНЦЕВИКИ НЕ БУДУТ НАЖАТЫ
   {
-    if((char) Serial.read() != '1')break;
+    //if((char) Serial.read() != '2')break;
     read_endstops(); // ЧИТАЕМ КОНЦЕВИКИ
     move_X(move_down, !endstop_read[X1_arcell], !endstop_read[X1_arcell]); // ДВИГАЕМ ОСЬ Z ( "!endstop_read[X1_arcell]" ЕСЛИ КОНЦЕВИК НЕ НАЖАТ ТО МОТОР МОЖЕТ ДВИГАТЬСЯ)
     
   }
   move_X(move_stop, 0, 0); // ОСТАНАВЛИВАЕМ ОСЬ X
   
-  while((char) Serial.read() != '1');
+  //while((char) Serial.read() != '1');
   
-  while(endstop_read[Z1_arcell] != true && endstop_read[Z2_arcell] != true && endstop_read[Z3_arcell] != true && endstop_read[Z4_arcell] != true) // ПОДНИМАЕМ ОСЬ Z ПОКА ВСЕ КОНЦЕВИКИ НЕ БУДУТ НАЖАТЫ
+  while((endstop_read[Z1_arcell] != true && endstop_read[Z2_arcell] != true) && (endstop_read[Z3_arcell] != true && endstop_read[Z4_arcell] != true)) // ПОДНИМАЕМ ОСЬ Z ПОКА ВСЕ КОНЦЕВИКИ НЕ БУДУТ НАЖАТЫ
   {
-    if((char) Serial.read() != '1')break;
+    //if((char) Serial.read() != '2')break;
     read_endstops(); // ЧИТАЕМ КОНЦЕВИКИ
     move_Z(move_up, !endstop_read[Z1_arcell], !endstop_read[Z2_arcell], !endstop_read[Z3_arcell], !endstop_read[Z4_arcell] ); // ДВИГАЕМ ОСЬ Z ( "!endstop_read[Z1_arcell]" ЕСЛИ КОНЦЕВИК НЕ НАЖАТ ТО МОТОР МОЖЕТ ДВИГАТЬСЯ)
   }                
@@ -480,11 +483,88 @@ void pump(int mode = 0) // ФУНКЦИЯ РАБОТЫ ВАККУМНОЙ ПРИ
       digitalWrite(pump_pin, HIGH); // ВКЛЮЧАЕМ ПОМПУ
   }
 }
+void encoder_reset()
+{
+  Z1_enc_value = 0;
+  Z2_enc_value = 0;
+  Z3_enc_value = 0;
+  Z4_enc_value = 0;
+
+  X1_enc_value = 0;
+  X2_enc_value = 0;
+
+  Y_enc_value = 0;
+}
+int getTiks(int modes = 4, int x = 0, int y = 0, int z = 0)
+{   
+      int dX = x - lastPos[_X_];
+      int dX_long = dX * cell_Size[_X_];
+      int wheelXRev = dX_long % Wheel_long;
+      int tiksX = Wheel_ticks * wheelXRev;
+
+      int dY = y - lastPos[_Y_];
+      int dY_long = dY * cell_Size[_Y_];
+      int wheelYRev = dY_long % Wheel_long;
+      int tiksY = Wheel_ticks * wheelYRev;
+
+      int dZ = z - lastPos[_Z_];
+      int dZ_long = dZ * cell_Size[_Z_];
+      int wheelZRev = dZ_long % Wheel_long;
+      int tiksZ = Wheel_ticks * wheelZRev;
+
+      switch (modes)
+      {
+        case _X_:
+          return tiksX;
+        case _Y_:
+          return tiksY;
+        case _Z_:
+          return tiksZ;
+      }
+}
+
+void go_xyz(int *POS, int pog)
+{
+  int XneedTiks = getTiks(_X_, POS[_X_], POS[_Y_], POS[_Z_]);
+  int YneedTiks = getTiks(_Y_, POS[_X_], POS[_Y_], POS[_Z_]);
+  int ZneedTiks = getTiks(_Z_, POS[_X_], POS[_Y_], POS[_Z_]);
+
+  while (X1_enc_value != XneedTiks + pog && X2_enc_value != XneedTiks + pog)
+  {
+    if(XneedTiks < 0)
+      move_X(move_down, true, true);
+    else
+      move_X(move_up, true, true);
+  }  
+  move_X(move_stop, false, false);
+
+  while (Y_enc_value != YneedTiks + pog)
+  {
+    if(YneedTiks < 0)
+      move_Y(move_down);
+    else
+      move_Y(move_up);
+  }  
+  move_Y(move_stop);
+
+  while (Z1_enc_value != ZneedTiks + pog && Z2_enc_value != ZneedTiks + pog && Z3_enc_value != ZneedTiks + pog && Z4_enc_value != ZneedTiks + pog)
+  {
+    if(ZneedTiks < 0)
+      move_Z(move_down, true, true, true, true);
+    else
+      move_Z(move_up, true, true, true, true);
+  }
+  move_Z(move_stop, false, false, false, false); 
+  
+  lastPos[_X_] = POS[_X_];
+  lastPos[_Y_] = POS[_Y_];
+  lastPos[_Z_] = POS[_Z_]; 
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void loop()
 {
-go_home();
-while(1);
+
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

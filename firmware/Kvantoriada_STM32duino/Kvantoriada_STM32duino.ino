@@ -7,13 +7,13 @@
 #define COM_baud 115200 // СКОРОСТЬ ПОСЛЕДОВАТЕЛЬНОГО ПОРТА
 
 // ПАРАМЕТРЫ РАБОЧЕГО ПРОСТРАНСТВА
-#define WS_X_size 740 // РАЗМЕР РАБОЧЕГО ПРОСТРАНСТВА ПО ОСИ X
-#define WS_Y_size 740 // РАЗМЕР РАБОЧЕГО ПРОСТРАНСТВА ПО ОСИ Y
+#define WS_X_size 710 // РАЗМЕР РАБОЧЕГО ПРОСТРАНСТВА ПО ОСИ X
+#define WS_Y_size 635 // РАЗМЕР РАБОЧЕГО ПРОСТРАНСТВА ПО ОСИ Y
 #define WS_Z_size 740 // РАЗМЕР РАБОЧЕГО ПРОСТРАНСТВА ПО ОСИ Z
 
-#define CELL_X_size 10 // РАЗМЕР ЯЧЕЙКИ ПРОСТРАНСТВА ПО ОСИ X
-#define CELL_Y_size 10 // РАЗМЕР ЯЧЕЙКИ ПРОСТРАНСТВА ПО ОСИ Y
-#define CELL_Z_size 10 // РАЗМЕР ЯЧЕЙКИ ПРОСТРАНСТВА ПО ОСИ Z
+#define CELL_X_size 2 // РАЗМЕР ЯЧЕЙКИ ПРОСТРАНСТВА ПО ОСИ X
+#define CELL_Y_size 2 // РАЗМЕР ЯЧЕЙКИ ПРОСТРАНСТВА ПО ОСИ Y
+#define CELL_Z_size 2 // РАЗМЕР ЯЧЕЙКИ ПРОСТРАНСТВА ПО ОСИ Z
 
 #define Wheel_deametr 55 // ДИАМЕТР КОЛЕСА ЭНКОДЕРА
 #define Wheel_ticks 65 // КОЛИЧЕСТВО ТИКОВ КОЛЕСА ЭНКОДЕРА НА ОБОРОТ
@@ -21,6 +21,12 @@
 
 const int cell_Size[3] = {CELL_X_size, CELL_Y_size, CELL_Z_size}; // МАССИВ РАЗМЕРОВ ЯЧЕКИ (ФОРМАТ: XYZ)
 const int ws_Size[3] = {WS_X_size, WS_Y_size, WS_Z_size};         // МАССИВ РАЗМЕРОВ РАБОЧЕГО ПРОСТРАНСТВА (ФОРМАТ: XYZ)
+
+int deltaPos[3] = {0, 0, 0};
+int deltaPos_long[3] = {0, 0, 0};
+double wheel_oborots[3] = {0, 0, 0};
+double tiks[3] = {0, 0, 0};
+
 
 int nextPos[3] = {0, 0, 0}; // МАССИВ СЛЕДУЮЩЕЙ ПОЗИЦИИ ГОЛОВЫ РОБОТА (ФОРМАТ: XYZ)
 int currPos[3] = {0, 0, 0}; // МАССИВ ТЕКУЩЕЙ ПОЗИЦИИ ГОЛОВЫ РОБОТА (ФОРМАТ: XYZ)
@@ -193,6 +199,8 @@ void setup()
   pins_init();// ИНИЦИАЛИЗЯЦИЯ ПИНОВ
   encoders_init(); // ИНИЦИАЛИЗАЦИЯ ЭНКОДЕРОВ
   Dynamixel_init(); // ИНИЦИАЛИЗЯЦИЯ СИСТЕМЫ ДЛЯ ДИНАМИКСЕЛЕЙ
+  //go_home();
+  encoder_reset();
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void pins_init() // ФУНКЦИЯ ИНИЦИАЛИЗАЦИИ ПИНОВ
@@ -495,76 +503,22 @@ void encoder_reset()
 
   Y_enc_value = 0;
 }
-int getTiks(int modes = 4, int x = 0, int y = 0, int z = 0)
-{   
-      int dX = x - lastPos[_X_];
-      int dX_long = dX * cell_Size[_X_];
-      int wheelXRev = dX_long % Wheel_long;
-      int tiksX = Wheel_ticks * wheelXRev;
-
-      int dY = y - lastPos[_Y_];
-      int dY_long = dY * cell_Size[_Y_];
-      int wheelYRev = dY_long % Wheel_long;
-      int tiksY = Wheel_ticks * wheelYRev;
-
-      int dZ = z - lastPos[_Z_];
-      int dZ_long = dZ * cell_Size[_Z_];
-      int wheelZRev = dZ_long % Wheel_long;
-      int tiksZ = Wheel_ticks * wheelZRev;
-
-      switch (modes)
-      {
-        case _X_:
-          return tiksX;
-        case _Y_:
-          return tiksY;
-        case _Z_:
-          return tiksZ;
-      }
-}
-
-void go_xyz(int *POS, int pog)
+int getTiks(int _Axis_ = 3)
 {
-  int XneedTiks = getTiks(_X_, POS[_X_], POS[_Y_], POS[_Z_]);
-  int YneedTiks = getTiks(_Y_, POS[_X_], POS[_Y_], POS[_Z_]);
-  int ZneedTiks = getTiks(_Z_, POS[_X_], POS[_Y_], POS[_Z_]);
-
-  while (X1_enc_value != XneedTiks + pog && X2_enc_value != XneedTiks + pog)
-  {
-    if(XneedTiks < 0)
-      move_X(move_down, true, true);
-    else
-      move_X(move_up, true, true);
-  }  
-  move_X(move_stop, false, false);
-
-  while (Y_enc_value != YneedTiks + pog)
-  {
-    if(YneedTiks < 0)
-      move_Y(move_down);
-    else
-      move_Y(move_up);
-  }  
-  move_Y(move_stop);
-
-  while (Z1_enc_value != ZneedTiks + pog && Z2_enc_value != ZneedTiks + pog && Z3_enc_value != ZneedTiks + pog && Z4_enc_value != ZneedTiks + pog)
-  {
-    if(ZneedTiks < 0)
-      move_Z(move_down, true, true, true, true);
-    else
-      move_Z(move_up, true, true, true, true);
-  }
-  move_Z(move_stop, false, false, false, false); 
-  
-  lastPos[_X_] = POS[_X_];
-  lastPos[_Y_] = POS[_Y_];
-  lastPos[_Z_] = POS[_Z_]; 
+  deltaPos[_Axis_] = lastPos[_Axis_] - nextPos[_Axis_];
+  deltaPos_long[_Axis_] = deltaPos[_Axis_] * cell_Size[_Axis_];
+  wheel_oborots[_Axis_] = deltaPos_long[_Axis_] / wheel_long;
+  tiks[_Axis_] = wheel_oborots[_Axis_] * Wheel_tiks;
+  return tiks[_Axis_];
+}
+void go_to()
+{
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void loop()
 {
-
+  
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

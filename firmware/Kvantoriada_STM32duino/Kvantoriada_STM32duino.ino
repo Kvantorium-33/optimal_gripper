@@ -16,16 +16,16 @@
 #define CELL_Z_size 2 // РАЗМЕР ЯЧЕЙКИ ПРОСТРАНСТВА ПО ОСИ Z
 
 #define Wheel_deametr 55 // ДИАМЕТР КОЛЕСА ЭНКОДЕРА
-#define Wheel_ticks 65 // КОЛИЧЕСТВО ТИКОВ КОЛЕСА ЭНКОДЕРА НА ОБОРОТ
+#define Wheel_tiks 65 // КОЛИЧЕСТВО ТИКОВ КОЛЕСА ЭНКОДЕРА НА ОБОРОТ
 #define Wheel_long Wheel_deametr * PI
 
 const int cell_Size[3] = {CELL_X_size, CELL_Y_size, CELL_Z_size}; // МАССИВ РАЗМЕРОВ ЯЧЕКИ (ФОРМАТ: XYZ)
 const int ws_Size[3] = {WS_X_size, WS_Y_size, WS_Z_size};         // МАССИВ РАЗМЕРОВ РАБОЧЕГО ПРОСТРАНСТВА (ФОРМАТ: XYZ)
 
-int deltaPos[3] = {0, 0, 0};
-int deltaPos_long[3] = {0, 0, 0};
+int deltaPos[3] =         {0, 0, 0};
+int deltaPos_long[3] =    {0, 0, 0};
 double wheel_oborots[3] = {0, 0, 0};
-double tiks[3] = {0, 0, 0};
+double tiks[3] =          {0, 0, 0};
 
 
 int nextPos[3] = {0, 0, 0}; // МАССИВ СЛЕДУЮЩЕЙ ПОЗИЦИИ ГОЛОВЫ РОБОТА (ФОРМАТ: XYZ)
@@ -460,8 +460,7 @@ void go_home()
   }                
   
   move_Z(move_stop, 0, 0, 0, 0); // ОСТАНАВЛИВАЕМ ОСЬ Z
- 
-  
+
 }
 
 void rotate_gripper(int deg = 0) // ФУНКЦИЯ ПОВОРОТА ЗАХВАТА
@@ -503,16 +502,91 @@ void encoder_reset()
 
   Y_enc_value = 0;
 }
-int getTiks(int _Axis_ = 3)
+
+void upgrade_pos(int x, int y, int z)
+{
+  nextPos[_X_] = x;
+  nextPos[_Y_] = y;
+  nextPos[_Z_] = z;
+}
+void print_need_data()
+{
+  COM.println("nextPos:");
+  COM.print("{");
+  COM.print(nextPos[_X_]);
+  COM.print(", ");
+  COM.print(nextPos[_Y_]);
+  COM.print(", ");
+  COM.print(nextPos[_Z_]);
+  COM.println("};");
+
+  
+  COM.print("currentPos:");
+  COM.print("{");
+  COM.print(currPos[_X_]);
+  COM.print(", ");
+  COM.print(currPos[_Y_]);
+  COM.print(", ");
+  COM.print(currPos[_Z_]);
+  COM.println("};");
+
+  
+  COM.print("lastPos:");
+  COM.print("{");
+  COM.print(lastPos[_X_]);
+  COM.print(", ");
+  COM.print(lastPos[_Y_]);
+  COM.print(", ");
+  COM.print(lastPos[_Z_]);
+  COM.println("};");
+
+  COM.print("X_tiks: ");
+  COM.print(getTiks(_X_));
+  COM.println(";");
+  COM.print("Y_tiks: ");
+  COM.print(getTiks(_Y_));
+  COM.println(";");
+  COM.print("Z_tiks: ");
+  COM.print(getTiks(_Z_));
+  COM.println(";");
+  
+}
+double getTiks(int _Axis_ = 3)
 {
   deltaPos[_Axis_] = lastPos[_Axis_] - nextPos[_Axis_];
   deltaPos_long[_Axis_] = deltaPos[_Axis_] * cell_Size[_Axis_];
-  wheel_oborots[_Axis_] = deltaPos_long[_Axis_] / wheel_long;
+  wheel_oborots[_Axis_] = deltaPos_long[_Axis_] / Wheel_long;
   tiks[_Axis_] = wheel_oborots[_Axis_] * Wheel_tiks;
   return tiks[_Axis_];
 }
+
 void go_to()
 {
+  int XTiks = getTiks(_X_);
+  int YTiks = getTiks(_Y_);
+  int ZTiks = getTiks(_Z_);
+  
+  while(X1_enc_value < XTiks || X2_enc_value < XTiks)
+  {
+    if(XTiks < 0)
+      move_X(move_down, true, true);
+    else
+      move_X(move_up, true, true);
+  }
+  move_X(move_stop, false, false);
+
+  while(Y_enc_value < YTiks)
+  {
+    if(YTiks < 0)
+      move_Y(move_down);
+    else 
+      move_Y(move_up);
+  }
+  move_Y(move_stop);
+  
+  lastPos[_X_] = nextPos[_X_];
+  lastPos[_Y_] = nextPos[_Y_];
+  lastPos[_Z_] = nextPos[_Z_];
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -503,6 +503,15 @@ void encoder_reset()
   Y_enc_value = 0;
 }
 
+double getTiks(int _Axis_ = 3)
+{
+  deltaPos[_Axis_] = lastPos[_Axis_] - nextPos[_Axis_];
+  deltaPos_long[_Axis_] = deltaPos[_Axis_] * cell_Size[_Axis_];
+  wheel_oborots[_Axis_] = deltaPos_long[_Axis_] / Wheel_long;
+  tiks[_Axis_] = wheel_oborots[_Axis_] * Wheel_tiks;
+  return tiks[_Axis_];
+}
+
 void upgrade_pos(int x, int y, int z)
 {
   nextPos[_X_] = x;
@@ -551,22 +560,17 @@ void print_need_data()
   COM.println(";");
   
 }
-double getTiks(int _Axis_ = 3)
-{
-  deltaPos[_Axis_] = lastPos[_Axis_] - nextPos[_Axis_];
-  deltaPos_long[_Axis_] = deltaPos[_Axis_] * cell_Size[_Axis_];
-  wheel_oborots[_Axis_] = deltaPos_long[_Axis_] / Wheel_long;
-  tiks[_Axis_] = wheel_oborots[_Axis_] * Wheel_tiks;
-  return tiks[_Axis_];
-}
+
 
 void go_to()
 {
+  print_need_data();
+
   int XTiks = getTiks(_X_);
   int YTiks = getTiks(_Y_);
   int ZTiks = getTiks(_Z_);
   
-  while(X1_enc_value < XTiks || X2_enc_value < XTiks)
+  while( (X1_enc_value + X2_enc_value) / 2 <= XTiks)
   {
     if(XTiks < 0)
       move_X(move_down, true, true);
@@ -575,7 +579,9 @@ void go_to()
   }
   move_X(move_stop, false, false);
 
-  while(Y_enc_value < YTiks)
+  delay(100);
+
+  while(Y_enc_value <= YTiks)
   {
     if(YTiks < 0)
       move_Y(move_down);
@@ -583,16 +589,29 @@ void go_to()
       move_Y(move_up);
   }
   move_Y(move_stop);
+
+  delay(100);
+
+  while ( (Z1_enc_value + Z2_enc_value + Z3_enc_value + Z4_enc_value) / 4 <= ZTiks)
+  {
+    if (ZTiks < 0)
+      move_Z(move_down, true, true, true, true);
+    else
+      move_Z(move_up, true, true, true, true);
+  }
+  move_Z(move_stop, false, false, false, false);
   
   lastPos[_X_] = nextPos[_X_];
   lastPos[_Y_] = nextPos[_Y_];
   lastPos[_Z_] = nextPos[_Z_];
+
+  print_need_data();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void loop()
 {
-  
+
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

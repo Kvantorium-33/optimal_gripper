@@ -11,13 +11,22 @@
 #define WS_Y_size 635 // РАЗМЕР РАБОЧЕГО ПРОСТРАНСТВА ПО ОСИ Y
 #define WS_Z_size 740 // РАЗМЕР РАБОЧЕГО ПРОСТРАНСТВА ПО ОСИ Z
 
-#define CELL_X_size 10 // РАЗМЕР ЯЧЕЙКИ ПРОСТРАНСТВА ПО ОСИ X
-#define CELL_Y_size 10 // РАЗМЕР ЯЧЕЙКИ ПРОСТРАНСТВА ПО ОСИ Y
-#define CELL_Z_size 10 // РАЗМЕР ЯЧЕЙКИ ПРОСТРАНСТВА ПО ОСИ Z
+#define X_max 71
+#define X_min 0 
+
+#define Y_max 127
+#define Y_min 0 
+
+#define Z_max 74
+#define Z_min 0 
 
 #define Wheel_deametr 55 // ДИАМЕТР КОЛЕСА ЭНКОДЕРА
 #define Wheel_tiks 65 // КОЛИЧЕСТВО ТИКОВ КОЛЕСА ЭНКОДЕРА НА ОБОРОТ
 #define Wheel_long Wheel_deametr * PI
+
+int CELL_X_size = WS_X_size / X_max;
+int CELL_Y_size = WS_Y_size / Y_max;
+int CELL_Z_size = WS_Z_size / Z_max;
 
 const int cell_Size[3] = {CELL_X_size, CELL_Y_size, CELL_Z_size}; // МАССИВ РАЗМЕРОВ ЯЧЕКИ (ФОРМАТ: XYZ)
 const int ws_Size[3] = {WS_X_size, WS_Y_size, WS_Z_size};         // МАССИВ РАЗМЕРОВ РАБОЧЕГО ПРОСТРАНСТВА (ФОРМАТ: XYZ)
@@ -514,19 +523,28 @@ double getTiks(int _Axis_ = 3)
 
   tiks[_Axis_] = wheel_oborots[_Axis_] * Wheel_tiks;
 
-  return round(tiks[_Axis_]);
+  COM.print("deltaPos: ");
+  COM.println(deltaPos[_Axis_]);
+  COM.print("wheel_oborots: ");
+  COM.println(wheel_oborots[_Axis_]);
+  COM.print("tiks: ");
+  COM.println(round(tiks[_Axis_]));
 
-// 
-//  COM.print("deltaPos: ");
-//  COM.println(deltaPos[_Axis_]);
-//  COM.print("wheel_oborots: ");
-//  COM.println(wheel_oborots[_Axis_]);
-//  COM.print("tiks: ");
-//  COM.println(tiks[_Axis_]);
+
+  return round(tiks[_Axis_]);
 }
 
 void upgrade_pos(int x, int y, int z)
 {
+  if (x > X_max) x = X_max;
+  if (x < X_min) x = X_min;
+
+  if (y > Y_max) y = Y_max;
+  if (y < Y_min) y = Y_min;
+
+  if (z > Z_max) z = Z_max;
+  if (z < Z_min) z = Z_min;
+
   nextPos[_X_] = x;
   nextPos[_Y_] = y;
   nextPos[_Z_] = z;
@@ -579,7 +597,9 @@ void go_to()
 {
   step_++;
   COM.println(" STEP " + step_);
+
   encoder_reset();
+  COM.println();
   print_need_data();
 
   int XTiks = getTiks(_X_);
@@ -587,51 +607,36 @@ void go_to()
   int ZTiks = getTiks(_Z_);
 
   if (XTiks < 0)
-  {
     while (X1_enc_value < -XTiks || X2_enc_value < -XTiks)
-    {
-
       move_X(move_down, true, true);
-    }
-  }
   else
-  {
     while (X1_enc_value < XTiks || X2_enc_value < XTiks)
-    {
       move_X(move_up, true, true);
-    }
-  }
+
   move_X(move_stop, false, false);
 
-  delay(100);
+  delay(50);
 
   if (YTiks < 0)
-  {
     while (Y_enc_value < -XTiks)
-    {
       move_Y(move_down);
-    }
-  }
   else
-  {
     while (Y_enc_value < XTiks)
-    {
       move_Y(move_up);
-    }
-  }
-
+ 
   move_Y(move_stop);
 
-  delay(100);
+  delay(50);
 
-  while ( (Z1_enc_value + Z2_enc_value + Z3_enc_value + Z4_enc_value) / 4 <= ZTiks)
-  {
-    if (ZTiks < 0)
+  if (ZTiks < 0)
+    while (Z1_enc_value < -ZTiks || Z2_enc_value < -ZTiks || Z3_enc_value < -ZTiks || Z4_enc_value < -ZTiks)
       move_Z(move_down, true, true, true, true);
-    else
+  else 
+    while (Z1_enc_value < ZTiks || Z2_enc_value < ZTiks || Z3_enc_value < ZTiks || Z4_enc_value < ZTiks)
       move_Z(move_up, true, true, true, true);
-  }
+
   move_Z(move_stop, false, false, false, false);
+
 
   lastPos[_X_] = nextPos[_X_];
   lastPos[_Y_] = nextPos[_Y_];
@@ -657,18 +662,18 @@ void loop()
 //    if (data == '0')
 //      move_Z(move_stop);
 //
-  upgrade_pos(100, 0, 0);
+
+  upgrade_pos(35, 0, 0);
   go_to();
-  delay(500);
-  upgrade_pos(100, 10000, 0);
+  delay(100);
+  upgrade_pos(35, 63, 0);
   go_to();
-  delay(500);
-  upgrade_pos(0, 10000, 0);
+  upgrade_pos(0, 63, 0);
   go_to();
-  delay(500);
   upgrade_pos(0, 0, 0);
   go_to();
-  while(1);
+  while (1);
+  
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

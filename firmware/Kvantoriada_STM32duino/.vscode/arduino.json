@@ -3,5 +3,5 @@
     "configuration": "device_variant=STM32F103C8,upload_method=DFUUploadMethod,cpu_speed=speed_72mhz,opt=osstd",
     "programmer": "AVRISP mkII",
     "sketch": "Kvantoriada_STM32duino.ino",
-    "port": "COM46"
+    "port": "/dev/ttyACM0"
 }

@@ -11,10 +11,10 @@
 #define WS_Y_size 635 // РАЗМЕР РАБОЧЕГО ПРОСТРАНСТВА ПО ОСИ Y
 #define WS_Z_size 740 // РАЗМЕР РАБОЧЕГО ПРОСТРАНСТВА ПО ОСИ Z
 
-#define X_max 71
+#define X_max 10
 #define X_min 0 
 
-#define Y_max 127
+#define Y_max 5
 #define Y_min 0 
 
 #define Z_max 74
@@ -234,6 +234,8 @@ void com_init() // ФУНКЦИЯ ИНИЦИАЛИЗАЦИИ ПОСЛЕДОВА�
   COM.begin(COM_baud);
   while (!COM);
   COM.println("Ready");
+  Serial1.begin(9600);
+  Serial1.println("Ready");
 }
 
 void encoders_init() // ФУНКЦИЯ ИНИЦИАЛИЗАЦИИ ПРЕРЫВАНИЙ ЭНКОДЕРОВ
@@ -261,10 +263,10 @@ void print_endstops() // ФУНКЦИЯ ВЫВОДА СОСТОЯНИЙ КОНЦ
   for (int i = 0; i < endstop_count; i++)
   {
     read_endstops();
-    COM.print(endstop_read[i]);
-    COM.print(" ");
+    Serial1.print(endstop_read[i]);
+    Serial1.print(" ");
   }
-  COM.println();
+  Serial1.println();
 }
 
 void print_encoders() // ФУНКЦИЯ ВЫВОДА СЧЕТЧИКОВ ЭНКОДЕРОВ
@@ -444,32 +446,35 @@ void go_home()
   {
     //if((char) Serial.read() != '2')break;
     read_endstops(); // ЧИТАЕМ КОНЦЕВИКИ
+    print_endstops();
     move_Y(move_down); // СДВИГАЕМ ОСЬ Y
   }
   move_Y(move_stop); // ОСТАНАВЛИВАЕМ ОСЬ Y
 
   //while((char) Serial.read() != '1');
 
-  while (endstop_read[X1_arcell] != true && endstop_read[X2_arcell] != true) // СДВИГАЕМ ОСЬ Х ПОКА ВСЕ КОНЦЕВИКИ НЕ БУДУТ НАЖАТЫ
+  while (endstop_read[X1_arcell] != true || endstop_read[X2_arcell] != true) // СДВИГАЕМ ОСЬ Х ПОКА ВСЕ КОНЦЕВИКИ НЕ БУДУТ НАЖАТЫ
   {
     //if((char) Serial.read() != '2')break;
     read_endstops(); // ЧИТАЕМ КОНЦЕВИКИ
-    move_X(move_down, !endstop_read[X1_arcell], !endstop_read[X1_arcell]); // ДВИГАЕМ ОСЬ Z ( "!endstop_read[X1_arcell]" ЕСЛИ КОНЦЕВИК НЕ НАЖАТ ТО МОТОР МОЖЕТ ДВИГАТЬСЯ)
+    print_endstops();
+    move_X(move_down, true, true); // ДВИГАЕМ ОСЬ Z ( "!endstop_read[X1_arcell]" ЕСЛИ КОНЦЕВИК НЕ НАЖАТ ТО МОТОР МОЖЕТ ДВИГАТЬСЯ)
 
   }
-  move_X(move_stop, 0, 0); // ОСТАНАВЛИВАЕМ ОСЬ X
+  move_X(move_stop, false, false); // ОСТАНАВЛИВАЕМ ОСЬ X
 
   //while((char) Serial.read() != '1');
 
-  while ((endstop_read[Z1_arcell] != true && endstop_read[Z2_arcell] != true) && (endstop_read[Z3_arcell] != true && endstop_read[Z4_arcell] != true)) // ПОДНИМАЕМ ОСЬ Z ПОКА ВСЕ КОНЦЕВИКИ НЕ БУДУТ НАЖАТЫ
-  {
-    //if((char) Serial.read() != '2')break;
-    read_endstops(); // ЧИТАЕМ КОНЦЕВИКИ
-    move_Z(move_up, !endstop_read[Z1_arcell], !endstop_read[Z2_arcell], !endstop_read[Z3_arcell], !endstop_read[Z4_arcell] ); // ДВИГАЕМ ОСЬ Z ( "!endstop_read[Z1_arcell]" ЕСЛИ КОНЦЕВИК НЕ НАЖАТ ТО МОТОР МОЖЕТ ДВИГАТЬСЯ)
-  }
-
-  move_Z(move_stop, 0, 0, 0, 0); // ОСТАНАВЛИВАЕМ ОСЬ Z
-
+//  while ((endstop_read[Z1_arcell] != true && endstop_read[Z2_arcell] != true) && (endstop_read[Z3_arcell] != true && endstop_read[Z4_arcell] != true)) // ПОДНИМАЕМ ОСЬ Z ПОКА ВСЕ КОНЦЕВИКИ НЕ БУДУТ НАЖАТЫ
+//  {
+//    //if((char) Serial.read() != '2')break;
+//    read_endstops(); // ЧИТАЕМ КОНЦЕВИКИ
+//    move_Z(move_up, !endstop_read[Z1_arcell], !endstop_read[Z2_arcell], !endstop_read[Z3_arcell], !endstop_read[Z4_arcell] ); // ДВИГАЕМ ОСЬ Z ( "!endstop_read[Z1_arcell]" ЕСЛИ КОНЦЕВИК НЕ НАЖАТ ТО МОТОР МОЖЕТ ДВИГАТЬСЯ)
+//  }
+//
+//  move_Z(move_stop, 0, 0, 0, 0); // ОСТАНАВЛИВАЕМ ОСЬ Z
+  move_Y(move_stop);
+  move_X(move_stop, false, false);
 }
 
 void rotate_gripper(int deg = 0) // ФУНКЦИЯ ПОВОРОТА ЗАХВАТА
@@ -522,13 +527,13 @@ double getTiks(int _Axis_ = 3)
   wheel_oborots[_Axis_] = deltaPos_long[_Axis_] / Wheel_long;
 
   tiks[_Axis_] = wheel_oborots[_Axis_] * Wheel_tiks;
-
-  COM.print("deltaPos: ");
-  COM.println(deltaPos[_Axis_]);
-  COM.print("wheel_oborots: ");
-  COM.println(wheel_oborots[_Axis_]);
-  COM.print("tiks: ");
-  COM.println(round(tiks[_Axis_]));
+//
+//  COM.print("deltaPos: ");
+//  COM.println(deltaPos[_Axis_]);
+//  COM.print("wheel_oborots: ");
+//  COM.println(wheel_oborots[_Axis_]);
+//  COM.print("tiks: ");
+//  COM.println(round(tiks[_Axis_]));
 
 
   return round(tiks[_Axis_]);
@@ -536,18 +541,21 @@ double getTiks(int _Axis_ = 3)
 
 void upgrade_pos(int x, int y, int z)
 {
-  if (x > X_max) x = X_max;
-  if (x < X_min) x = X_min;
-
-  if (y > Y_max) y = Y_max;
-  if (y < Y_min) y = Y_min;
-
-  if (z > Z_max) z = Z_max;
-  if (z < Z_min) z = Z_min;
+//  if (x > X_max) x = X_max;
+//  if (x < X_min) x = X_min;
+//
+//  if (y > Y_max) y = Y_max;
+//  if (y < Y_min) y = Y_min;
+//
+//  if (z > Z_max) z = Z_max;
+//  if (z < Z_min) z = Z_min;
 
   nextPos[_X_] = x;
   nextPos[_Y_] = y;
   nextPos[_Z_] = z;
+  print_need_data();
+  go_to();
+  print_need_data();
 }
 void print_need_data()
 {
@@ -589,18 +597,13 @@ void print_need_data()
   COM.print("Z_tiks: ");
   COM.print(getTiks(_Z_));
   COM.println(";");
-
+  
 }
 
-
+  
 void go_to()
 {
-  step_++;
-  COM.println(" STEP " + step_);
-
   encoder_reset();
-  COM.println();
-  print_need_data();
 
   int XTiks = getTiks(_X_);
   int YTiks = getTiks(_Y_);
@@ -618,10 +621,10 @@ void go_to()
   delay(50);
 
   if (YTiks < 0)
-    while (Y_enc_value < -XTiks)
+    while (Y_enc_value < -YTiks)
       move_Y(move_down);
   else
-    while (Y_enc_value < XTiks)
+    while (Y_enc_value < YTiks)
       move_Y(move_up);
  
   move_Y(move_stop);
@@ -641,8 +644,10 @@ void go_to()
   lastPos[_X_] = nextPos[_X_];
   lastPos[_Y_] = nextPos[_Y_];
   lastPos[_Z_] = nextPos[_Z_];
-  COM.println();
-  print_need_data();
+  move_X(move_stop, false, false);
+  move_Y(move_stop);
+  move_Z(move_stop, false, false, false, false);
+  encoder_reset();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -661,17 +666,17 @@ void loop()
 //
 //    if (data == '0')
 //      move_Z(move_stop);
-//
-
-  upgrade_pos(35, 0, 0);
-  go_to();
+////
+//  upgrade_pos(0, 0, 100);
+//  delay(100);
+  upgrade_pos(4, 0, 0);
   delay(100);
-  upgrade_pos(35, 63, 0);
-  go_to();
-  upgrade_pos(0, 63, 0);
-  go_to();
+  upgrade_pos(4, 4, 0);
+  delay(100);
+  upgrade_pos(0, 4, 0);
+  delay(100);
   upgrade_pos(0, 0, 0);
-  go_to();
+  delay(100);
   while (1);
   
 }

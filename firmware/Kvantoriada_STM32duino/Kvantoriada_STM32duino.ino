@@ -11,9 +11,9 @@
 #define WS_Y_size 635 // РАЗМЕР РАБОЧЕГО ПРОСТРАНСТВА ПО ОСИ Y
 #define WS_Z_size 740 // РАЗМЕР РАБОЧЕГО ПРОСТРАНСТВА ПО ОСИ Z
 
-#define CELL_X_SIZE 10
-#define CELL_Y_SIZE 5  
-#define CELL_Z_SIZE 10
+#define CELL_X_SIZE 71
+#define CELL_Y_SIZE 42  
+#define CELL_Z_SIZE 74
 
 #define Wheel_deametr 55 // ДИАМЕТР КОЛЕСА ЭНКОДЕРА
 #define Wheel_tiks 65 // КОЛИЧЕСТВО ТИКОВ КОЛЕСА ЭНКОДЕРА НА ОБОРОТ
@@ -22,15 +22,11 @@ const double Wheel_long = Wheel_deametr * PI;
 const int cell_Size[3] = {CELL_X_SIZE, CELL_Y_SIZE, CELL_Z_SIZE}; // МАССИВ РАЗМЕРОВ ЯЧЕКИ (ФОРМАТ: XYZ)
 const int ws_Size[3] = {WS_X_size, WS_Y_size, WS_Z_size};         // МАССИВ РАЗМЕРОВ РАБОЧЕГО ПРОСТРАНСТВА (ФОРМАТ: XYZ)
 
-int deltaPos[3] =         {0, 0, 0};
-int deltaPos_long[3] =    {0, 0, 0};
-double wheel_oborots[3] = {0, 0, 0};
-double tiks[3] =          {0, 0, 0};
+float lenth[3] = {0.0, 0.0, 0.0}; 
 
-
-int nextPos[3] = {0, 0, 0}; // МАССИВ СЛЕДУЮЩЕЙ ПОЗИЦИИ ГОЛОВЫ РОБОТА (ФОРМАТ: XYZ)
-int currPos[3] = {0, 0, 0}; // МАССИВ ТЕКУЩЕЙ ПОЗИЦИИ ГОЛОВЫ РОБОТА (ФОРМАТ: XYZ)
-int lastPos[3] = {0, 0, 0}; // МАССИВ ПРЕДЫДУЩЕЙ ПОЗИЦИИ ГОЛОВЫ РОБОТА (ФОРМАТ: XYZ)
+float nextPos[3] = {0.0, 0.0, 0.0}; // МАССИВ СЛЕДУЮЩЕЙ ПОЗИЦИИ ГОЛОВЫ РОБОТА (ФОРМАТ: XYZ)
+float currPos[3] = {0.0, 0.0, 0.0}; // МАССИВ ТЕКУЩЕЙ ПОЗИЦИИ ГОЛОВЫ РОБОТА (ФОРМАТ: XYZ)
+float lastPos[3] = {0.0, 0.0, 0.0}; // МАССИВ ПРЕДЫДУЩЕЙ ПОЗИЦИИ ГОЛОВЫ РОБОТА (ФОРМАТ: XYZ)
 
 // ПЕРЕМЕННЫЕ ДЛЯ ВЫБОРА ОСЕЙ В ФУНКЦИЯХ И ТРОЙНЫХ МАССИВАХ
 #define _X_ 0
@@ -225,19 +221,20 @@ void com_init() // ФУНКЦИЯ ИНИЦИАЛИЗАЦИИ ПОСЛЕДОВА�
   COM.begin(COM_baud);
   while (!COM);
   COM.println("Ready");
+  while((char) COM.read() != '1');
 }
 
 void encoders_init() // ФУНКЦИЯ ИНИЦИАЛИЗАЦИИ ПРЕРЫВАНИЙ ЭНКОДЕРОВ
 {
-  attachInterrupt(digitalPinToInterrupt(encoder_pins_array[Z1_arcell]), Z1_counter, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(encoder_pins_array[Z2_arcell]), Z2_counter, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(encoder_pins_array[Z3_arcell]), Z3_counter, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(encoder_pins_array[Z4_arcell]), Z4_counter, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(encoder_pins_array[Z1_arcell]), Z1_counter, RISING);
+  attachInterrupt(digitalPinToInterrupt(encoder_pins_array[Z2_arcell]), Z2_counter, RISING);
+  attachInterrupt(digitalPinToInterrupt(encoder_pins_array[Z3_arcell]), Z3_counter, RISING);
+  attachInterrupt(digitalPinToInterrupt(encoder_pins_array[Z4_arcell]), Z4_counter, RISING);
 
-  attachInterrupt(digitalPinToInterrupt(encoder_pins_array[X1_arcell]), X1_counter, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(encoder_pins_array[X2_arcell]), X2_counter, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(encoder_pins_array[X1_arcell]), X1_counter, RISING);
+  attachInterrupt(digitalPinToInterrupt(encoder_pins_array[X2_arcell]), X2_counter, RISING);
 
-  attachInterrupt(digitalPinToInterrupt(encoder_pins_array[Y_arcell]), Y_counter, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(encoder_pins_array[Y_arcell]), Y_counter, RISING);
 }
 void read_endstops() // ФУНКЦИЯ СЧИТЫВАНИЯ СОСТОЯНИЙ КОНЦЕВИКОВ
 {
@@ -431,43 +428,50 @@ void move_Y(int mode = 0) // ФУНКЦИЯ ПЕРЕМЕЩЕНИЯ ОСИ Y
 
 void go_home()
 {
+  read_endstops();
+  if (endstop_read[Y_arcell] == true){}
+  else
+  {
+      do 
+      {
+        //if((char) Serial.read() != '2')break;
+        read_endstops(); // ЧИТАЕМ КОНЦЕВИКИ
+        move_Y(move_down); // СДВИГАЕМ ОСЬ Y
+      } while (endstop_read[Y_arcell] != true); // СДВИГАЕМ ОСЬ Y ПОКА КОНЦЕВИК НЕ БУДЕТ НАЖАТ
+
+    move_Y(move_stop); // ОСТАНАВЛИВАЕМ ОСЬ Y
+  }
+  //while((char) Serial.read() != '1');
+  if (endstop_read[X1_arcell] == true || endstop_read[X2_arcell] == true){}
+  else
+  {
+      do
+      {
+        //if((char) Serial.read() != '2')break;
+        read_endstops(); // ЧИТАЕМ КОНЦЕВИКИ
+        move_X(move_down, true, true); // ДВИГАЕМ ОСЬ Z ( "!endstop_read[X1_arcell]" ЕСЛИ КОНЦЕВИК НЕ НАЖАТ ТО МОТОР МОЖЕТ ДВИГАТЬСЯ)
+    
+      } while (endstop_read[X1_arcell] != true || endstop_read[X2_arcell] != true); // СДВИГАЕМ ОСЬ Х ПОКА ВСЕ КОНЦЕВИКИ НЕ БУДУТ НАЖАТЫ
   
-  do 
-  {
-    //if((char) Serial.read() != '2')break;
-    read_endstops(); // ЧИТАЕМ КОНЦЕВИКИ
-    move_Y(move_down); // СДВИГАЕМ ОСЬ Y
-  } while (endstop_read[Y_arcell] != true) // СДВИГАЕМ ОСЬ Y ПОКА КОНЦЕВИК НЕ БУДЕТ НАЖАТ
-
-  move_Y(move_stop); // ОСТАНАВЛИВАЕМ ОСЬ Y
-
+    move_X(move_stop, false, false); // ОСТАНАВЛИВАЕМ ОСЬ X
+  }
   //while((char) Serial.read() != '1');
 
-  do
-  {
-    //if((char) Serial.read() != '2')break;
-    read_endstops(); // ЧИТАЕМ КОНЦЕВИКИ
-    move_X(move_down, true, true); // ДВИГАЕМ ОСЬ Z ( "!endstop_read[X1_arcell]" ЕСЛИ КОНЦЕВИК НЕ НАЖАТ ТО МОТОР МОЖЕТ ДВИГАТЬСЯ)
-
-  } while (endstop_read[X1_arcell] != true || endstop_read[X2_arcell] != true) // СДВИГАЕМ ОСЬ Х ПОКА ВСЕ КОНЦЕВИКИ НЕ БУДУТ НАЖАТЫ
-
-  move_X(move_stop, false, false); // ОСТАНАВЛИВАЕМ ОСЬ X
-
-  //while((char) Serial.read() != '1');
-
-  do
-  {
-    //if((char) Serial.read() != '2')break;
-    read_endstops(); // ЧИТАЕМ КОНЦЕВИКИ
-    move_Z(move_up, !endstop_read[Z1_arcell], !endstop_read[Z2_arcell], !endstop_read[Z3_arcell], !endstop_read[Z4_arcell] ); // ДВИГАЕМ ОСЬ Z ( "!endstop_read[Z1_arcell]" ЕСЛИ КОНЦЕВИК НЕ НАЖАТ ТО МОТОР МОЖЕТ ДВИГАТЬСЯ)
-
-  } while ((endstop_read[Z1_arcell] != true && endstop_read[Z2_arcell] != true) && (endstop_read[Z3_arcell] != true && endstop_read[Z4_arcell] != true)) // ПОДНИМАЕМ ОСЬ Z ПОКА ВСЕ КОНЦЕВИКИ НЕ БУДУТ НАЖАТЫ
+//  do
+//  {
+//    //if((char) Serial.read() != '2')break;
+//    read_endstops(); // ЧИТАЕМ КОНЦЕВИКИ
+//    move_Z(move_up, !endstop_read[Z1_arcell], !endstop_read[Z2_arcell], !endstop_read[Z3_arcell], !endstop_read[Z4_arcell] ); // ДВИГАЕМ ОСЬ Z ( "!endstop_read[Z1_arcell]" ЕСЛИ КОНЦЕВИК НЕ НАЖАТ ТО МОТОР МОЖЕТ ДВИГАТЬСЯ)
+//
+//  } while ((endstop_read[Z1_arcell] != true && endstop_read[Z2_arcell] != true) && (endstop_read[Z3_arcell] != true && endstop_read[Z4_arcell] != true)); // ПОДНИМАЕМ ОСЬ Z ПОКА ВСЕ КОНЦЕВИКИ НЕ БУДУТ НАЖАТЫ
 
   move_Z(move_stop, false, false, false, false); // ОСТАНАВЛИВАЕМ ОСЬ Z
 
   move_Y(move_stop);
   move_X(move_stop, false, false);
   move_Z(move_stop, false, false, false, false);
+  encoder_reset();
+  COM.println("HOME");
 }
 
 void rotate_gripper(int deg = 0) // ФУНКЦИЯ ПОВОРОТА ЗАХВАТА
@@ -510,31 +514,31 @@ void encoder_reset()
   Y_enc_value = 0;
 }
 
-double getTiks(int _Axis_ = 3)
+int getLenth(int _Axis_ = 3)
 {
+  switch(_Axis_)
+  {
+    case _X_:
 
-  deltaPos[_Axis_] = nextPos[_Axis_] - lastPos[_Axis_];
+    return round(((((X1_enc_value + X2_enc_value) / 2) / Wheel_tiks) * PI * Wheel_deametr) / 2000);
+    
+    break;
 
-  deltaPos_long[_Axis_] = deltaPos[_Axis_] * cell_Size[_Axis_];
+    case _Y_:
+      
+    return round(((Y_enc_value / Wheel_tiks) * PI * Wheel_deametr) / 1000);
+    
+    break;
 
-  wheel_oborots[_Axis_] = deltaPos_long[_Axis_] / Wheel_long;
+    case _Z_:
 
-  tiks[_Axis_] = wheel_oborots[_Axis_] * Wheel_tiks;
-//
-//  COM.print("deltaPos: ");
-//  COM.println(deltaPos[_Axis_]);
-//  COM.print("wheel_oborots: ");
-//  COM.println(wheel_oborots[_Axis_]);
-//  COM.print("tiks: ");
-//  COM.println(round(tiks[_Axis_]));
-  return round(tiks[_Axis_]);
-  deltaPos[_Axis_] = 0;
-  deltaPos_long[_Axis_] = 0;
-  wheel_oborots[_Axis_] = 0;
-  tiks[_Axis_] = 0;
+    return round(((((Z1_enc_value + Z2_enc_value + Z3_enc_value + Z4_enc_value) / 4 ) / Wheel_tiks) * PI * Wheel_deametr)/ 4000);
+
+    break;
+  }
 }
 
-void upgrade_pos(int x, int y, int z)
+void upgrade_pos(float x, float y, float z)
 {
 //  if (x > X_max) x = X_max;
 //  if (x < X_min) x = X_min;
@@ -582,66 +586,50 @@ void print_need_data()
   COM.print(", ");
   COM.print(lastPos[_Z_]);
   COM.println("};");
-
-  COM.print("X_tiks: ");
-  COM.print(getTiks(_X_));
-  COM.println(";");
-  COM.print("Y_tiks: ");
-  COM.print(getTiks(_Y_));
-  COM.println(";");
-  COM.print("Z_tiks: ");
-  COM.print(getTiks(_Z_));
-  COM.println(";");
-  
+  COM.println();
 }
 
   
 void go_to()
 {
   encoder_reset();
-
-  int XTiks = getTiks(_X_);
-  int YTiks = getTiks(_Y_);
-  int ZTiks = getTiks(_Z_);
-
-  if (XTiks < 0)
-    while (X1_enc_value < -XTiks || X2_enc_value < -XTiks)
-      move_X(move_down, true, true);
+  if (nextPos[_X_] < lastPos[_X_])
+    while (getLenth(_X_) < lastPos[_X_] - nextPos[_X_])
+    {
+      read_endstops();
+      move_X(move_down, !endstop_read[X1_arcell], !endstop_read[X2_arcell]);
+    }
   else
-    while (X1_enc_value < XTiks || X2_enc_value < XTiks)
+    while (getLenth(_X_) < nextPos[_X_] - lastPos[_X_])
       move_X(move_up, true, true);
-
+      
   move_X(move_stop, false, false);
 
-  delay(50);
-
-  if (YTiks < 0)
-    while (Y_enc_value < -YTiks)
-      move_Y(move_down);
+  delay(100);
+  
+  if (nextPos[_Y_] < lastPos[_Y_])
+    while(getLenth(_Y_) < lastPos[_Y_] - nextPos[_Y_])
+     move_Y(move_down);
   else
-    while (Y_enc_value < YTiks)
-      move_Y(move_up);
- 
+    while(getLenth(_Y_) < nextPos[_Y_] - lastPos[_Y_])
+     move_Y(move_up);
+  
   move_Y(move_stop);
 
-  delay(50);
+  delay(100);
 
-  if (ZTiks < 0)
-    while (Z1_enc_value < -ZTiks || Z2_enc_value < -ZTiks || Z3_enc_value < -ZTiks || Z4_enc_value < -ZTiks)
+  if (nextPos[_Z_] < lastPos[_Z_])
+    while(getLenth(_Z_) < lastPos[_Z_] - nextPos[_Z_])
       move_Z(move_down, true, true, true, true);
-  else 
-    while (Z1_enc_value < ZTiks || Z2_enc_value < ZTiks || Z3_enc_value < ZTiks || Z4_enc_value < ZTiks)
+  else
+    while(getLenth(_Z_) < nextPos[_Z_] - lastPos[_Z_])
       move_Z(move_up, true, true, true, true);
-
+      
   move_Z(move_stop, false, false, false, false);
-
-
+    
   lastPos[_X_] = nextPos[_X_];
   lastPos[_Y_] = nextPos[_Y_];
   lastPos[_Z_] = nextPos[_Z_];
-  move_X(move_stop, false, false);
-  move_Y(move_stop);
-  move_Z(move_stop, false, false, false, false);
   encoder_reset();
 }
 
@@ -652,7 +640,7 @@ void loop()
 //  if (COM.available())
 //  {
 //    char data =  (char) COM.read();
-//
+//M
 //    if (data == '1')
 //      move_Z(move_up,1 , 1, 1, 1);
 //
@@ -664,15 +652,22 @@ void loop()
 ////
 //  upgrade_pos(0, 0, 100);
 //  delay(100);
-  upgrade_pos(4, 0, 0);
-  delay(100);
-  upgrade_pos(4, 4, 0);
-  delay(100);
-  upgrade_pos(0, 4, 0);
-  delay(100);
-  upgrade_pos(0, 0, 0);
-  delay(100);
-  while (1);
+upgrade_pos(30,0,0);
+delay(100);
+upgrade_pos(30,30,0);
+delay(100);
+upgrade_pos(30,30,5);
+delay(100);
+upgrade_pos(0,30,5);
+delay(100);
+upgrade_pos(0,0,5);
+delay(100);
+upgrade_pos(0,0,0);
+
+  while (1){
+    if ((char) COM.read() == 'h')
+      go_home();
+  }
   
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

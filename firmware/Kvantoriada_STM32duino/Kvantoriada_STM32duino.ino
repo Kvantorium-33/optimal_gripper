@@ -11,15 +11,11 @@
 #define WS_Y_size 635 // РАЗМЕР РАБОЧЕГО ПРОСТРАНСТВА ПО ОСИ Y
 #define WS_Z_size 740 // РАЗМЕР РАБОЧЕГО ПРОСТРАНСТВА ПО ОСИ Z
 
-#define CELL_X_SIZE 71
-#define CELL_Y_SIZE 42  
-#define CELL_Z_SIZE 74
 
 #define Wheel_deametr 55 // ДИАМЕТР КОЛЕСА ЭНКОДЕРА
 #define Wheel_tiks 65 // КОЛИЧЕСТВО ТИКОВ КОЛЕСА ЭНКОДЕРА НА ОБОРОТ
 const double Wheel_long = Wheel_deametr * PI;
 
-const int cell_Size[3] = {CELL_X_SIZE, CELL_Y_SIZE, CELL_Z_SIZE}; // МАССИВ РАЗМЕРОВ ЯЧЕКИ (ФОРМАТ: XYZ)
 const int ws_Size[3] = {WS_X_size, WS_Y_size, WS_Z_size};         // МАССИВ РАЗМЕРОВ РАБОЧЕГО ПРОСТРАНСТВА (ФОРМАТ: XYZ)
 
 float lenth[3] = {0.0, 0.0, 0.0}; 
@@ -172,6 +168,9 @@ int Y_speed = 1020;  // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Y
 int valve_speed = 1020;  // СКОРОСТЬ ДИНАМИКСЕЛЯ КЛАПАНА
 int rot_grip_speed = 1020; // СКОРОСТЬ ДИНАМИКСЕЛЯ ПОВОРОТА ЗАХВАТА
 int grip_pos_speed = 1020; // СКОРОСТЬ ДИНАМИКСЕЛЯ ЗАХВАТА
+
+const int grip_max_pos = 0;
+const int grip_min_pos = 0;
 
 int speed_ar[Dynamixel_count] = {Z1_speed, Z2_speed, Z3_speed, Z4_speed, X1_speed, X2_speed, Y_speed, valve_speed, rot_grip_speed, grip_pos_speed};
 
@@ -588,8 +587,7 @@ void print_need_data()
   COM.println("};");
   COM.println();
 }
-
-  
+ 
 void go_to()
 {
   encoder_reset();
@@ -598,10 +596,15 @@ void go_to()
     {
       read_endstops();
       move_X(move_down, !endstop_read[X1_arcell], !endstop_read[X2_arcell]);
+      if (endstop_read[X1_arcell] == true && endstop_read[X2_arcell] == true) { break; }
     }
   else
     while (getLenth(_X_) < nextPos[_X_] - lastPos[_X_])
-      move_X(move_up, true, true);
+    {
+      read_endstops();
+      move_X(move_up, !endstop_read[X1_arcell], !endstop_read[X2_arcell]);
+      if (endstop_read[X1_arcell] == true && endstop_read[X2_arcell] == true) { break; }
+    }
       
   move_X(move_stop, false, false);
 
@@ -652,17 +655,6 @@ void loop()
 ////
 //  upgrade_pos(0, 0, 100);
 //  delay(100);
-upgrade_pos(30,0,0);
-delay(100);
-upgrade_pos(30,30,0);
-delay(100);
-upgrade_pos(30,30,5);
-delay(100);
-upgrade_pos(0,30,5);
-delay(100);
-upgrade_pos(0,0,5);
-delay(100);
-upgrade_pos(0,0,0);
 
   while (1){
     if ((char) COM.read() == 'h')

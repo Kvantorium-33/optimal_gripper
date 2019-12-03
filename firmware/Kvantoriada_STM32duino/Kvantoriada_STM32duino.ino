@@ -194,7 +194,7 @@ void setup()
   pins_init();// ИНИЦИАЛИЗЯЦИЯ ПИНОВ
   encoders_init(); // ИНИЦИАЛИЗАЦИЯ ЭНКОДЕРОВ
   Dynamixel_init(); // ИНИЦИАЛИЗЯЦИЯ СИСТЕМЫ ДЛЯ ДИНАМИКСЕЛЕЙ
-  //go_home();
+  go_home();
   encoder_reset();
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -297,6 +297,20 @@ void Dynamixel_init() // ФУНКЦИЯ ИНИЦИАЛИЗАЦИИ СЕРВОМ�
   Dynamixel.turn(dyn_id_ar[Y_arcell], RIGHT, 0); // ОСТАНАВЛИВАЕМ ДИНАМИКСЕЛЬ Y
 }
 
+void ABstop(int id, bool state)
+{
+  if (state == true)
+  {
+    Dynamixel.setEndless(id, OFF);
+
+    Dynamixel.move(id, Dynamixel.readPosition(id));
+  }
+  else
+  {
+    Dynamixel.setEndless(id, ON);
+    Dynamixel.turn(id, LEFT, 0);
+  }
+}
 void move_X(int mode = 0, bool on1 = false, bool on2 = false) // ФУНКЦИЯ ПЕРЕМЕЩЕНИЯ ОСИ X
 {
   int dX = X1_enc_value - X2_enc_value; // НАХОДИМ РАЗНОСТЬ ЭНКОДЕРОВ КАРЕТОК Х1 И Х2
@@ -355,7 +369,6 @@ void move_Z(int mode = 0, bool on1 = false, bool on2 = false, bool on3 = false, 
 
   switch (mode) // СМОТРИМ КАКОЙ РЕЖИМ У НАС ПРОСЯТ
   {
-
     case move_up: // ЕДЕМ ВПЕРЕД (В СТОРОНУ УВЕЛЕЧЕНИЯ КООРДИНАТЫ)
       if (on1 == true) // ЕСЛИ ЕСТЬ РАЗРЕШЕНИЕ ДВИГАТЬСЯ ТО ДВИГАЕМСЯ
         Dynamixel.turn(dyn_id_ar[Z1_arcell], RIGHT, Z1_sp);
@@ -383,7 +396,6 @@ void move_Z(int mode = 0, bool on1 = false, bool on2 = false, bool on3 = false, 
       Dynamixel.turn(dyn_id_ar[Z2_arcell], LEFT, 0);
       Dynamixel.turn(dyn_id_ar[Z3_arcell], RIGHT, 0);
       Dynamixel.turn(dyn_id_ar[Z4_arcell], LEFT, 0);
-
       break;
     case move_down: // ЕДЕМ НАЗАД (В СТОРОНУ УМЕНЬШЕНИЯ КООРДИНАТЫ)
       if (on1 == true) // ЕСЛИ ЕСТЬ РАЗРЕШЕНИЕ ДВИГАТЬСЯ ТО ДВИГАЕМСЯ
@@ -539,15 +551,6 @@ int getLenth(int _Axis_ = 3)
 
 void upgrade_pos(float x, float y, float z)
 {
-//  if (x > X_max) x = X_max;
-//  if (x < X_min) x = X_min;
-//
-//  if (y > Y_max) y = Y_max;
-//  if (y < Y_min) y = Y_min;
-//
-//  if (z > Z_max) z = Z_max;
-//  if (z < Z_min) z = Z_min;
-
   nextPos[_X_] = x;
   nextPos[_Y_] = y;
   nextPos[_Z_] = z;
@@ -639,28 +642,25 @@ void go_to()
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void loop()
 {
-//{
-//  if (COM.available())
-//  {
-//    char data =  (char) COM.read();
-//M
-//    if (data == '1')
-//      move_Z(move_up,1 , 1, 1, 1);
-//
-//    if (data == '2')
-//      move_Z(move_down,1 , 1, 1, 1);
-//
-//    if (data == '0')
-//      move_Z(move_stop);
-////
-//  upgrade_pos(0, 0, 100);
-//  delay(100);
+  if (COM.available())
+  {
+    char data =  (char) COM.read();
 
-  while (1){
-    if ((char) COM.read() == 'h')
-      go_home();
+    if (data == '2')
+      move_Z(move_up,1 , 1, 1, 1);
+
+    if (data == '3')
+      move_Z(move_down,1 , 1, 1, 1);
+
+    if (data == '0')
+      move_Z(move_stop);
+      
+//  while (1)
+//  {
+//    if ((char) COM.read() == 'h')
+//        go_home();
+
   }
-  
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

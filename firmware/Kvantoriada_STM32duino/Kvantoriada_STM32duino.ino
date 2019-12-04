@@ -28,16 +28,10 @@ float lastPos[3] = {0.0, 0.0, 0.0}; // МАССИВ ПРЕДЫДУЩЕЙ ПОЗ�
 #define _X_ 0
 #define _Y_ 1
 #define _Z_ 2
-
-//#define Z1
-//#define Z2
-//#define Z3
-//#define Z4
-//
-//#define X1
-//#define X2
-//
-//#define Y
+// ПЕРЕМЕННЫЕ ДЛЯ ВЫБОРА РЕЖИМА ПЕРЕМЕЩЕНИЯ ОСЕЙ (МАКС, МИН, ПАРКОВКА)
+#define _MAX_ 0
+#define _MIN_ 1
+#define _PARK_ 2
 
 // ПЕРЕМЕННЫЕ ДЛЯ ВЫБОРА ЯЧЕЕК В МАССИВАХ
 #define Z1_arcell 0 // ЯЧЕЙКА ОСИ Z1
@@ -100,7 +94,7 @@ int dyn_id_ar[Dynamixel_count] = // МАССИВ ID СЕРВОМОТОРОВ
 #define Y_encoder_pin   PB15 // ПИН ЭНКОДЕРА ОСИ Y
 
 
-const int encoder_pins_array[7] = // МАССИВ ПИНОВ ЭНКОДЕРОВ ОСЕЙ
+const int encoder_pins_array[encoder_count] = // МАССИВ ПИНОВ ЭНКОДЕРОВ ОСЕЙ
 {
   Z1_encoder_pin,
   Z2_encoder_pin,
@@ -155,15 +149,17 @@ const int endstops_pins_array[endstop_count] =  //МАССИВ ПИНОВ КОН
 #define move_stop 0   // НЕДВИЖЕНИЕ ОСИ
 #define move_down -1  // ДВИЖЕНИЕ ОСИ ПО УМЕНЬШЕНИЮ КООРДИНАТ
 
-int Z1_speed = 700; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Z1
-int Z2_speed = 700; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Z2
-int Z3_speed = 700; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Z3
-int Z4_speed = 700; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Z4
+int goMode_ = 0;
 
-int X1_speed = 1020; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ X1
-int X2_speed = 1020; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ X2
+int Z1_speed[3] = {1020, 0, 600}; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Z1
+int Z2_speed[3] = {1020, 0, 600}; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Z2
+int Z3_speed[3] = {1020, 0, 600}; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Z3
+int Z4_speed[3] = {1020, 0, 600}; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Z4
 
-int Y_speed = 1020;  // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Y
+int X1_speed[3] = {1020, 0, 600}; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ X1
+int X2_speed[3] = {1020, 0, 600}; // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ X2
+
+int Y_speed[3] = {1020, 0, 600};  // СКОРОСТЬ ДИНАМИКСЕЛЯ КАРЕТКИ Y
 
 int valve_speed = 1020;  // СКОРОСТЬ ДИНАМИКСЕЛЯ КЛАПАНА
 int rot_grip_speed = 1020; // СКОРОСТЬ ДИНАМИКСЕЛЯ ПОВОРОТА ЗАХВАТА
@@ -172,7 +168,19 @@ int grip_pos_speed = 1020; // СКОРОСТЬ ДИНАМИКСЕЛЯ ЗАХВА
 const int grip_max_pos = 0;
 const int grip_min_pos = 0;
 
-int speed_ar[Dynamixel_count] = {Z1_speed, Z2_speed, Z3_speed, Z4_speed, X1_speed, X2_speed, Y_speed, valve_speed, rot_grip_speed, grip_pos_speed};
+int speed_ar[Dynamixel_count] = 
+{
+  Z1_speed[goMode_], 
+  Z2_speed[goMode_], 
+  Z3_speed[goMode_], 
+  Z4_speed[goMode_], 
+  X1_speed[goMode_], 
+  X2_speed[goMode_], 
+  Y_speed[goMode_], 
+  valve_speed, 
+  rot_grip_speed, 
+  grip_pos_speed
+};
 
 #define valve_close 512 // ЗНАЧЕНИЕ ДЛЯ ДИНАМИКСЛЕЯ КЛАПАНА ПРИ ЕГО ПОЛНОМ ЗАКРЫТИИ
 #define valve_open 512  // ЗНАЧЕНИЕ ДЛЯ ДИНАМИКСЛЕЯ КЛАПАНА ПРИ ЕГО ПОЛНОМ ОТКРЫТИИ
@@ -297,20 +305,6 @@ void Dynamixel_init() // ФУНКЦИЯ ИНИЦИАЛИЗАЦИИ СЕРВОМ�
   Dynamixel.turn(dyn_id_ar[Y_arcell], RIGHT, 0); // ОСТАНАВЛИВАЕМ ДИНАМИКСЕЛЬ Y
 }
 
-void ABstop(int id, bool state)
-{
-  if (state == true)
-  {
-    Dynamixel.setEndless(id, OFF);
-
-    Dynamixel.move(id, Dynamixel.readPosition(id));
-  }
-  else
-  {
-    Dynamixel.setEndless(id, ON);
-    Dynamixel.turn(id, LEFT, 0);
-  }
-}
 void move_X(int mode = 0, bool on1 = false, bool on2 = false) // ФУНКЦИЯ ПЕРЕМЕЩЕНИЯ ОСИ X
 {
   int dX = X1_enc_value - X2_enc_value; // НАХОДИМ РАЗНОСТЬ ЭНКОДЕРОВ КАРЕТОК Х1 И Х2
@@ -436,37 +430,48 @@ void move_Y(int mode = 0) // ФУНКЦИЯ ПЕРЕМЕЩЕНИЯ ОСИ Y
       break;
   }
 }
-
+void goMode(int mode = 0)
+{
+  switch (mode)
+  {
+    case _MAX_:
+      goMode_ = _MAX_;
+    break;
+    case _MIN_:
+      goMode_ = _MIN_;
+    break;
+    case _PARK_:
+      goMode_ = _PARK_;
+    break;
+  }
+}
 void go_home()
 {
+  goMode(_PARK_);
   read_endstops();
   if (endstop_read[Y_arcell] == true){}
   else
   {
       do 
       {
-        //if((char) Serial.read() != '2')break;
         read_endstops(); // ЧИТАЕМ КОНЦЕВИКИ
         move_Y(move_down); // СДВИГАЕМ ОСЬ Y
       } while (endstop_read[Y_arcell] != true); // СДВИГАЕМ ОСЬ Y ПОКА КОНЦЕВИК НЕ БУДЕТ НАЖАТ
 
     move_Y(move_stop); // ОСТАНАВЛИВАЕМ ОСЬ Y
   }
-  //while((char) Serial.read() != '1');
   if (endstop_read[X1_arcell] == true || endstop_read[X2_arcell] == true){}
   else
   {
       do
       {
-        //if((char) Serial.read() != '2')break;
         read_endstops(); // ЧИТАЕМ КОНЦЕВИКИ
         move_X(move_down, true, true); // ДВИГАЕМ ОСЬ Z ( "!endstop_read[X1_arcell]" ЕСЛИ КОНЦЕВИК НЕ НАЖАТ ТО МОТОР МОЖЕТ ДВИГАТЬСЯ)
     
       } while (endstop_read[X1_arcell] != true || endstop_read[X2_arcell] != true); // СДВИГАЕМ ОСЬ Х ПОКА ВСЕ КОНЦЕВИКИ НЕ БУДУТ НАЖАТЫ
-  
+
     move_X(move_stop, false, false); // ОСТАНАВЛИВАЕМ ОСЬ X
   }
-  //while((char) Serial.read() != '1');
 
 //  do
 //  {
@@ -549,15 +554,7 @@ int getLenth(int _Axis_ = 3)
   }
 }
 
-void upgrade_pos(float x, float y, float z)
-{
-  nextPos[_X_] = x;
-  nextPos[_Y_] = y;
-  nextPos[_Z_] = z;
-  print_need_data();
-  go_to();
-  print_need_data();
-}
+
 void print_need_data()
 {
   COM.print("nextPos:");
@@ -594,6 +591,7 @@ void print_need_data()
 void go_to()
 {
   encoder_reset();
+  goMode(_MAX_);
   if (nextPos[_X_] < lastPos[_X_])
     while (getLenth(_X_) < lastPos[_X_] - nextPos[_X_])
     {
@@ -639,27 +637,23 @@ void go_to()
   encoder_reset();
 }
 
+void upgrade_pos(float x, float y, float z)
+{
+  nextPos[_X_] = x;
+  nextPos[_Y_] = y;
+  nextPos[_Z_] = z;
+  print_need_data();
+  go_to();
+  print_need_data();
+}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void loop()
 {
-  if (COM.available())
+ 
+ while (1)
   {
-    char data =  (char) COM.read();
-
-    if (data == '2')
-      move_Z(move_up,1 , 1, 1, 1);
-
-    if (data == '3')
-      move_Z(move_down,1 , 1, 1, 1);
-
-    if (data == '0')
-      move_Z(move_stop);
-      
-//  while (1)
-//  {
-//    if ((char) COM.read() == 'h')
-//        go_home();
-
+    if ((char) COM.read() == 'h')
+      go_home();
   }
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -698,3 +692,4 @@ void Y_counter() // СЧЕТЧИК ОСИ Y
 {
   Y_enc_value++;
 }
+
